@@ -113,7 +113,7 @@ public class ArrayParticleStore extends ParticleStore {
 
 	@Override
 	public ParticleStore getFreshParticleStoreInstance() {
-		return new ObjectParticleStore(n);
+		return new ArrayParticleStore(n);
 	}
 
 }
