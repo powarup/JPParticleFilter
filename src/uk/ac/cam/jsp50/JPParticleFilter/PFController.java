@@ -15,8 +15,8 @@ public class PFController {
 	
 	public static FloorPlan floorPlan;
 	public static ParticleStore particleStore;
-	public static final int initialParticleNo = 100000;
-	public static final int degeneracyLimit = 50000;
+	public static final int initialParticleNo = 3;
+	public static final int degeneracyLimit = 3;
 	public static int activeParticles = 0;
 	
 	public static PFVisualiser visualiser;
@@ -90,42 +90,6 @@ public class PFController {
 		 */
 		System.out.println("Resampling");
 		
-//		Iterator<Particle> particleIterator = particleStore.getIterator();
-//		Particle p;
-//		double totalWeight = 0;
-//		while (particleIterator.hasNext()) {
-//			p = particleIterator.next();
-//			totalWeight += p.w;
-//		}
-//		
-//		double[] randomN = new double[initialParticleNo];
-//		Random randomiser = new Random();
-//		for (int i = 1; i < initialParticleNo; i++) {
-//			randomN[i] = randomiser.nextDouble();
-//		}
-//		
-//		Arrays.sort(randomN);
-//		
-//		ParticleStore newParticles = new ParticleStore();
-//		
-//		double maxWeight = 0;
-//		int j = 0;
-//		particleIterator = particleStore.getIterator();
-//		while (j < initialParticleNo && particleIterator.hasNext()) {
-//			p = particleIterator.next();
-//			maxWeight += p.w/totalWeight;
-//			while (j < initialParticleNo && randomN[j] <= maxWeight) {
-//				Particle newParticle = p.clone();
-//				newParticle.w = newParticle.w / totalWeight;
-//				newParticles.addParticle(newParticle);
-//				j++;
-//			}
-//		}
-//		
-//		particleStore = newParticles;
-//		visualiser.particles = particleStore;
-//		activeParticles = j;
-		
 		ParticleManager particleManager = particleStore.getParticleManager();
 		double totalWeight = 0;
 		while (particleManager.hasNextActiveParticle()) {
@@ -135,7 +99,7 @@ public class PFController {
 		
 		double[] randomN = new double[initialParticleNo];
 		Random randomiser = new Random();
-		for (int i = 1; i < initialParticleNo; i++) {
+		for (int i = 0; i < initialParticleNo; i++) {
 			randomN[i] = randomiser.nextDouble();
 		}
 		
@@ -143,24 +107,36 @@ public class PFController {
 		
 		ParticleStore newParticles = particleStore.getFreshParticleStoreInstance();
 		
-		double maxWeight = 0;
-		int j = 0;
 		particleManager = particleStore.getParticleManager();
-		while (j < initialParticleNo && particleManager.hasNextActiveParticle()) {
-			particleManager.nextActiveParticle();
-			maxWeight += particleManager.getWeight()/totalWeight;
-			while (j < initialParticleNo && randomN[j] <= maxWeight) {
-				double x = particleManager.getX();
-				double y = particleManager.getY();
-				double w = particleManager.getWeight() / totalWeight;
-				newParticles.addParticle(x,y,w);
-				j++;
+		particleManager.nextActiveParticle();
+		double weightTotal = particleManager.getWeight();
+		
+		System.out.println("total weight: " + totalWeight);
+		
+		// iterate over random numbers
+		// if weight less than current total weight seen, generate new particle
+		// else get new particle, update total weight, and try again
+		
+		for (int j = 0; j < initialParticleNo; j++) {
+			System.out.println("random number is " + randomN[j]);
+			while (randomN[j] > weightTotal) {
+				try {
+					particleManager.nextActiveParticle();
+				} catch (ParticleNotFoundException e) {
+					System.out.println("no particle found, at weight " + weightTotal + ", total weight of active particles is " + totalWeight + " and current random number is " + randomN[j] + ", assuming is floating point error, so using last particle");
+				}
+				weightTotal += particleManager.getWeight()/totalWeight;
 			}
+			System.out.println("replicating particle " + particleManager.summary());
+			double x = particleManager.getX();
+			double y = particleManager.getY();
+			double w = particleManager.getWeight() / totalWeight;
+			newParticles.addParticle(x,y,w);
 		}
 		
 		particleStore = newParticles;
 		visualiser.particles = particleStore;
-		activeParticles = j;
+		activeParticles = particleStore.getParticleNo();
 		
 	}
 	
@@ -193,7 +169,7 @@ public class PFController {
 		
 		showMemory();
 		startTime = System.currentTimeMillis();
-		init(ParticleStoreType.ARRAY);
+		init(ParticleStoreType.OBJECT);
 		endTime = System.currentTimeMillis();
 		System.out.println("init took " + (endTime - startTime) + "ms");
 		showMemory();
