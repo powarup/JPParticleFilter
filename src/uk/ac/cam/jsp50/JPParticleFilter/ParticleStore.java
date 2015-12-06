@@ -66,11 +66,16 @@ public abstract class ParticleStore {
 		}
 	}
 	
+
+	protected int greatestIndexAssigned = -1;
+	
 	public abstract int getParticleNo();
 	
-	public abstract boolean exists(int n);
+	public boolean exists(int n) {
+		return (n>=0) && (n <= greatestIndexAssigned);
+	}
 	
-	public abstract void addParticle(double x, double y, double w);
+	public abstract void addParticle(double x, double y, double w); // implementations must update greatestIndexAssigned
 	
 	public abstract double getXatIndex(int n);
 	public abstract double getYatIndex(int n);

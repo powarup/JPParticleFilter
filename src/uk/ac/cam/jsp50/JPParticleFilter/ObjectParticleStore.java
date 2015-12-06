@@ -79,14 +79,10 @@ public class ObjectParticleStore extends ParticleStore {
 	}
 
 	@Override
-	public boolean exists(int n) {
-		return (particles.size() > n) && (n >= 0);
-	}
-
-	@Override
 	public void addParticle(double x, double y, double w) {
 		Particle p = new Particle(x, y, w);
 		particles.add(p);
+		greatestIndexAssigned++;
 	}
 
 	@Override

@@ -2,7 +2,7 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 
 public class ArrayParticleStore extends ParticleStore {
 	
-	private int n, greatestIndexAssigned;
+	private int n;
 	private double[] xValues;
 	private double[] yValues;
 	private double[] weightValues;
@@ -43,7 +43,6 @@ public class ArrayParticleStore extends ParticleStore {
 	
 	public ArrayParticleStore(int _n) {
 		n = _n;
-		greatestIndexAssigned = -1;
 		xValues = new double[n];
 		yValues = new double[n];
 		weightValues = new double[n];
@@ -52,11 +51,6 @@ public class ArrayParticleStore extends ParticleStore {
 	@Override
 	public int getParticleNo() {
 		return n;
-	}
-
-	@Override
-	public boolean exists(int _n) {
-		return (_n < n) && (n >= 0);
 	}
 
 	@Override
