@@ -1,12 +1,10 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
-import java.util.Random;
-
 public class StepVectorGenerator {
 	
 	public static final double fixedLength = 0.75;
 	
-	public static Random randomGenerator;
+	public static PFRandom randomGenerator;
 	
 	private double generateLength() {
 		return fixedLength;
@@ -27,7 +25,7 @@ public class StepVectorGenerator {
 	
 	public StepVectorGenerator() {
 		if (randomGenerator == null) {
-			randomGenerator = new Random();
+			randomGenerator = PFRandom.getInstance();
 		}
 	}
 }

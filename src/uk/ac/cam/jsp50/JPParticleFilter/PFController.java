@@ -1,9 +1,9 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
 import java.util.Arrays;
-import java.util.Random;
 import java.util.Scanner;
 
+import uk.ac.cam.jsp50.JPParticleFilter.PFRandom.PFRandomInstanceAlreadyExistsException;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 
@@ -15,8 +15,8 @@ public class PFController {
 	
 	public static FloorPlan floorPlan;
 	public static ParticleStore particleStore;
-	public static final int initialParticleNo = 3;
-	public static final int degeneracyLimit = 3;
+	public static final int initialParticleNo = 30;
+	public static final int degeneracyLimit = 30;
 	public static int activeParticles = 0;
 	
 	public static PFVisualiser visualiser;
@@ -35,12 +35,13 @@ public class PFController {
 			break;
 		}
 		double x,y;
-		Random randomGenerator = new Random();
+		PFRandom randomGenerator = PFRandom.getInstance();
+		
 		double weight = 1.0/initialParticleNo;
 		while (activeParticles < initialParticleNo) {
 			x = randomGenerator.nextDouble() * floorPlan.maxX;
 			y = randomGenerator.nextDouble() * floorPlan.maxY;
-			
+						
 			if (floorPlan.pointIsInsideRoom(x, y)) {
 				particleStore.addParticle(x,y,weight);
 				activeParticles++;
@@ -52,7 +53,7 @@ public class PFController {
 	public static void propagate(StepVector s) {
 		System.out.println("Propagating " + activeParticles + " particles from step vector " + s.length + "," + s.angle);
 		
-		Random randomGenerator = new Random();
+		PFRandom randomGenerator = PFRandom.getInstance();
 		
 		ParticleManager particleManager = particleStore.getParticleManager();
 		
@@ -98,7 +99,7 @@ public class PFController {
 		}
 		
 		double[] randomN = new double[initialParticleNo];
-		Random randomiser = new Random();
+		PFRandom randomiser = PFRandom.getInstance();
 		for (int i = 0; i < initialParticleNo; i++) {
 			randomN[i] = randomiser.nextDouble();
 		}
@@ -118,7 +119,6 @@ public class PFController {
 		// else get new particle, update total weight, and try again
 		
 		for (int j = 0; j < initialParticleNo; j++) {
-			System.out.println("random number is " + randomN[j]);
 			while (randomN[j] > weightTotal) {
 				try {
 					particleManager.nextActiveParticle();
@@ -127,7 +127,6 @@ public class PFController {
 				}
 				weightTotal += particleManager.getWeight()/totalWeight;
 			}
-			System.out.println("replicating particle " + particleManager.summary());
 			double x = particleManager.getX();
 			double y = particleManager.getY();
 			double w = particleManager.getWeight() / totalWeight;
@@ -165,7 +164,13 @@ public class PFController {
 		
 		// argument taken is location of floor plan csv, initialise floorPlan data structure
 		String floorPlanPath = args[0];
-		floorPlan = new FloorPlan(floorPlanPath);		
+		floorPlan = new FloorPlan(floorPlanPath);
+
+		try {
+			PFRandom.startInstanceWithFile("1MRandoms.txt");
+		} catch (PFRandomInstanceAlreadyExistsException e1) {
+			System.out.println("could not instantiate PFRandom from file");
+		}
 		
 		showMemory();
 		startTime = System.currentTimeMillis();
