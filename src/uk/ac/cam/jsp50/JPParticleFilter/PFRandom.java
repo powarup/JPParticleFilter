@@ -93,10 +93,10 @@ public class PFRandom {
 	// random generators
 	
 	public double nextDouble() {
-		if (doubles.size() <= cacheLimit) loadCache();
 		if (!usingFile) {
 			return randomiser.nextDouble();
 		} else {
+			if (doubles.size() <= cacheLimit) loadCache();
 			return doubles.poll();
 		}
 	}
