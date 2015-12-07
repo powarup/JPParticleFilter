@@ -27,4 +27,8 @@ public class StepVector {
 		return noiseAngle;
 	}
 	
+	public String getDescription() {
+		return (this.length + "," + this.angle);
+	}
+	
 }
