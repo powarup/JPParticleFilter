@@ -20,12 +20,14 @@ public class PFRandom {
 	
 	private static boolean usingFile = false;
 	private static Random randomiser;
-	public static Queue<Double> doubles;
-	public static int cacheSize = 1000;
-	public static int cacheLimit = 10;
+	private static Queue<Double> doubles;
+	private static int cacheSize = 1000;
+	private static int cacheLimit = 10;
 	private BufferedReader br;
 	
 	private static PFRandom singleton;
+	
+	// Constructors
 	
 	protected PFRandom() {
 		randomiser = new Random();
@@ -42,27 +44,13 @@ public class PFRandom {
 			System.out.println(e.getMessage());
 		}
 	}
-	
-	private void loadCache() {
-		System.out.println("PFRandom:: filling cache");
-		String line = "";
-		try {
-			while ((line = br.readLine()) != null && doubles.size() < cacheSize) {
-				doubles.add(Double.parseDouble(line));
-			}
-			if (line == null) {
-				System.err.println("PFRandom:: run out of random numbers");
-			}
-		} catch (NumberFormatException | IOException e) {
-			System.out.println("PFRandom:: exception");
-			System.err.println(e.getMessage());
-		}
-	}
-	
+
 	public PFRandom(long seed) {
 		randomiser = new Random(seed);
 	}
 
+	// Singleton methods
+	
 	public static PFRandom getInstance() {
 		if (singleton == null) {
 			singleton = new PFRandom();
@@ -83,6 +71,26 @@ public class PFRandom {
 		} else throw new PFRandomInstanceAlreadyExistsException();
 		return singleton;
 	}
+
+	// object methods
+	
+	private void loadCache() {
+		System.out.println("PFRandom:: filling cache");
+		String line = "";
+		try {
+			while ((line = br.readLine()) != null && doubles.size() < cacheSize) {
+				doubles.add(Double.parseDouble(line));
+			}
+			if (line == null) {
+				System.err.println("PFRandom:: run out of random numbers");
+			}
+		} catch (NumberFormatException | IOException e) {
+			System.out.println("PFRandom:: exception");
+			System.err.println(e.getMessage());
+		}
+	}
+	
+	// random generators
 	
 	public double nextDouble() {
 		if (doubles.size() <= cacheLimit) loadCache();
@@ -92,24 +100,27 @@ public class PFRandom {
 			return doubles.poll();
 		}
 	}
+	
 	private double nextNextGaussian;
 	private boolean haveNextNextGaussian = false;
 
 	public double nextGaussian() {
-		if (haveNextNextGaussian) {
-			haveNextNextGaussian = false;
-			return nextNextGaussian;
-		} else {
-			double v1, v2, s;
-			do {
-				v1 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
-				v2 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
-				s = v1 * v1 + v2 * v2;
-			} while (s >= 1 || s == 0);
-			double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s)/s);
-			nextNextGaussian = v2 * multiplier;
-			haveNextNextGaussian = true;
-			return v1 * multiplier;
-		}
+		if (usingFile) {
+			if (haveNextNextGaussian) {
+				haveNextNextGaussian = false;
+				return nextNextGaussian;
+			} else {
+				double v1, v2, s;
+				do {
+					v1 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
+					v2 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
+					s = v1 * v1 + v2 * v2;
+				} while (s >= 1 || s == 0);
+				double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s)/s);
+				nextNextGaussian = v2 * multiplier;
+				haveNextNextGaussian = true;
+				return v1 * multiplier;
+			}
+		} else return randomiser.nextGaussian();
 	}
 }
