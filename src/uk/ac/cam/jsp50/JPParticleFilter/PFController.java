@@ -15,9 +15,9 @@ public class PFController {
 	}
 	
 	public static FloorPlan floorPlan;
-	public static ParticleStore particleStore;
-	public static final int maxParticleNo = 300;
-	public static final int degeneracyLimit = 30;
+	public static ParticleStore particleStore, inactiveStore;
+	public static int maxParticleNo;
+	public static int degeneracyLimit;
 	public static int activeParticles = 0;
 	
 	public static PFVisualiser visualiser;
@@ -112,7 +112,7 @@ public class PFController {
 		
 		Arrays.sort(randomN);
 		
-		ParticleStore newParticles = particleStore.getFreshParticleStoreInstance();
+		ParticleStore newParticles = (inactiveStore == null) ? particleStore.getFreshParticleStoreInstance() : inactiveStore;
 		
 		particleManager = particleStore.getParticleManager();
 		particleManager.nextActiveParticle();
@@ -139,6 +139,8 @@ public class PFController {
 			newParticles.addParticle(x,y,w);
 		}
 		
+		inactiveStore = particleStore;
+		inactiveStore.cleanForReuse();
 		particleStore = newParticles;
 		visualiser.particles = particleStore;
 		activeParticles = particleStore.getParticleNo();

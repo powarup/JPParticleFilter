@@ -81,8 +81,8 @@ public class ObjectParticleStore extends ParticleStore {
 	@Override
 	public void addParticle(double x, double y, double w) {
 		Particle p = new Particle(x, y, w);
-		particles.add(p);
 		greatestIndexAssigned++;
+		particles.add(greatestIndexAssigned, p);
 	}
 
 	@Override
@@ -131,51 +131,17 @@ public class ObjectParticleStore extends ParticleStore {
 
 	@Override
 	public int getParticleNo() {
-		return particles.size();
+		return greatestIndexAssigned + 1;
 	}
 
 	@Override
 	public ParticleStore getFreshParticleStoreInstance() {
 		return new ObjectParticleStore();
 	}
+
+	@Override
+	public void cleanForReuse() {
+		greatestIndexAssigned = -1;
+	}
 	
 }
-
-//private class WeightedParticleIterator implements Iterator<Particle>{
-//Particle nextParticle = null;
-//Iterator<Particle> baseIterator;
-//
-//public WeightedParticleIterator(Iterator<Particle> it) {
-//	baseIterator = it;
-//	if (baseIterator.hasNext()) {
-//		nextParticle = baseIterator.next();
-//		while (nextParticle.w <= 0 && baseIterator.hasNext()) {
-//			nextParticle = baseIterator.next();
-//		}
-//	}
-//}
-//
-//@Override
-//public boolean hasNext() {
-//	return (nextParticle != null);
-//}
-//
-//@Override
-//public Particle next() {
-//	Particle returnValue = nextParticle;
-//	nextParticle = null;
-//	if (baseIterator.hasNext()) {
-//		nextParticle = baseIterator.next();
-//		while (nextParticle.w <= 0 && baseIterator.hasNext()) {
-//			nextParticle = baseIterator.next();
-//		}
-//	}
-//	return returnValue;
-//}
-//
-//}
-
-//public Iterator<Particle> getIterator() {
-//Iterator<Particle> iterator = new WeightedParticleIterator(particles.iterator());
-//return iterator;
-//}

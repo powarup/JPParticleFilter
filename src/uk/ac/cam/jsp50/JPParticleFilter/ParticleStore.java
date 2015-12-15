@@ -90,4 +90,5 @@ public abstract class ParticleStore {
 	public abstract ParticleManager getParticleManager();
 	
 	public abstract ParticleStore getFreshParticleStoreInstance();
+	public abstract void cleanForReuse();
 }
