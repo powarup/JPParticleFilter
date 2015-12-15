@@ -167,33 +167,66 @@ public class PFController {
 	
 	public static void main(String[] args) {
 		
+		// args are: floor plan path; object/array for store type; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
+		
 		long startTime;
 		long endTime;
 		
 		// argument taken is location of floor plan csv, initialise floorPlan data structure
 		String floorPlanPath = args[0];
-		floorPlan = new FloorPlan(floorPlanPath);
+		String storeTypeOption = args[1];
+		int initialParticleNo = Integer.parseInt(args[2]);
+		maxParticleNo = Integer.parseInt(args[3]);
+		degeneracyLimit = Integer.parseInt(args[4]);
+		int seedingOption = Integer.parseInt(args[5]);
+		String randomFilePath = null, stepVectorFilePath = null;
 		
-		try {
+		ParticleStoreType storeType = ParticleStoreType.OBJECT;
+		if (storeTypeOption.equals("object")) {
+			storeType = ParticleStoreType.OBJECT;
+		}
+		if (storeTypeOption.equals("array")) {
+			storeType = ParticleStoreType.ARRAY;
+		}
+		
+		switch (seedingOption) {
+		case 1:
+			randomFilePath = args[6];
+			break;
+		case 2:
+			stepVectorFilePath = args[6];
+			break;
+		case 3:
+			randomFilePath = args[6];
+			stepVectorFilePath = args[7];
+			break;
+		default:
+			break;
+		}
+		
+		floorPlan = new FloorPlan(floorPlanPath);
+			
+		if (randomFilePath != null) try {
 			PFRandom.startInstanceWithFile("1MRandoms.txt");
 		} catch (PFRandomInstanceAlreadyExistsException e1) {
 			System.out.println("could not instantiate PFRandom from file");
 		}
 		
-		showMemory();
-		startTime = System.currentTimeMillis();
-		initWithParticleNo(ParticleStoreType.OBJECT,1);
-		endTime = System.currentTimeMillis();
-		System.out.println("init took " + (endTime - startTime) + "ms");
-		showMemory();
-		
 		StepVectorGenerator stepGen;
-		try {
+		if (stepVectorFilePath != null) try {
 			stepGen = StepVectorGenerator.startGeneratorFromFile("1KRight.csv");
 		} catch (StepVectorGeneratorInstanceAlreadyExistsException e1) {
 			System.out.println("could not instantiate StepVectorGenerator from file");
 			stepGen = StepVectorGenerator.getInstance();
-		}
+		} else stepGen = StepVectorGenerator.getInstance();
+		
+		showMemory();
+		startTime = System.currentTimeMillis();
+		initWithParticleNo(storeType,initialParticleNo);
+		endTime = System.currentTimeMillis();
+		System.out.println("init took " + (endTime - startTime) + "ms");
+		showMemory();
+		
 		
 		StepVector nextStep;
 		scan = new Scanner(System.in);
