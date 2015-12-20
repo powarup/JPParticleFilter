@@ -18,6 +18,10 @@ public abstract class ParticleStore {
 	public abstract class ParticleManager { // ParticleManager iterates over set of particles and provides proxy operations
 		private int n = -1;
 		
+		public int currentIndex() {
+			return n;
+		}
+		
 		public boolean hasNextActiveParticle() {
 			int i = n + 1;
 			while (exists(i)) {
@@ -70,6 +74,13 @@ public abstract class ParticleStore {
 	protected int greatestIndexAssigned = -1;
 	
 	public abstract int getParticleNo();
+	public double getTotalWeight() {
+		double totalWeight = 0;
+		for (int i = 0; i < greatestIndexAssigned; i++) {
+			totalWeight += getWeightatIndex(i);
+		}
+		return totalWeight;
+	}
 	
 	public boolean exists(int n) {
 		return (n>=0) && (n <= greatestIndexAssigned);
