@@ -44,7 +44,7 @@ public class PFController {
 		
 		double weight = 1.0/particleNo;
 		while (activeParticles < particleNo) {
-			System.out.println("Making " + particleNo + " particles. Current #active particles: " + activeParticles);
+			//System.out.println("Making " + particleNo + " particles. Current #active particles: " + activeParticles);
 			x = randomGenerator.nextDouble() * floorPlan.maxX;
 			y = randomGenerator.nextDouble() * floorPlan.maxY;
 						
@@ -53,7 +53,7 @@ public class PFController {
 				activeParticles++;
 			}
 		}
-		System.out.println("initialised with " + particleNo + " particles");
+		System.out.println("initialised with " + activeParticles + " particles");
 	}
 	
 	public static void propagate(StepVector s) {
@@ -165,6 +165,52 @@ public class PFController {
 				+ bytesToMegabytes(memory));
 	}
 	
+	private static void resetFilter() {
+		floorPlan = null;
+		particleStore = null;
+		inactiveStore = null;
+		visualiser = null;
+		scan = null;
+		maxParticleNo = 0;
+		degeneracyLimit = 0;
+		activeParticles = 0;
+		PFRandom.clearInstance();
+		StepVectorGenerator.clearInstance();
+	}
+	
+	public static void setupFilter(String floorPlanPath, ParticleStoreType storeType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath) {
+		resetFilter();
+		long startTime;
+		long endTime;
+		
+		PFController.maxParticleNo = maxParticleNo;
+		PFController.degeneracyLimit = degeneracyLimit;
+		
+		floorPlan = new FloorPlan(floorPlanPath);
+			
+		if (randomFilePath != null) try {
+			PFRandom.startInstanceWithFile(randomFilePath);
+		} catch (PFRandomInstanceAlreadyExistsException e1) {
+			System.out.println("could not instantiate PFRandom from file");
+		}
+		
+		if (stepVectorFilePath != null) try {
+			StepVectorGenerator.startGeneratorFromFile("1KRight.csv");
+		} catch (StepVectorGeneratorInstanceAlreadyExistsException e1) {
+			System.out.println("could not instantiate StepVectorGenerator from file");
+		}
+		
+		showMemory();
+		startTime = System.currentTimeMillis();
+		initWithParticleNo(storeType,initialParticleNo);
+		endTime = System.currentTimeMillis();
+		System.out.println("init took " + (endTime - startTime) + "ms");
+		showMemory();
+		
+		visualiser = new PFVisualiser(particleStore, floorPlan);
+		visualiser.update(false);
+	}
+	
 	public static void main(String[] args) {
 		
 		// args are: floor plan path; object/array for store type; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
@@ -172,12 +218,13 @@ public class PFController {
 		long startTime;
 		long endTime;
 		
-		// argument taken is location of floor plan csv, initialise floorPlan data structure
+		// get setup options
+		
 		String floorPlanPath = args[0];
 		String storeTypeOption = args[1];
 		int initialParticleNo = Integer.parseInt(args[2]);
-		maxParticleNo = Integer.parseInt(args[3]);
-		degeneracyLimit = Integer.parseInt(args[4]);
+		int _maxParticleNo = Integer.parseInt(args[3]);
+		int _degeneracyLimit = Integer.parseInt(args[4]);
 		int seedingOption = Integer.parseInt(args[5]);
 		String randomFilePath = null, stepVectorFilePath = null;
 		
@@ -204,35 +251,11 @@ public class PFController {
 			break;
 		}
 		
-		floorPlan = new FloorPlan(floorPlanPath);
-			
-		if (randomFilePath != null) try {
-			PFRandom.startInstanceWithFile("1MRandoms.txt");
-		} catch (PFRandomInstanceAlreadyExistsException e1) {
-			System.out.println("could not instantiate PFRandom from file");
-		}
-		
-		StepVectorGenerator stepGen;
-		if (stepVectorFilePath != null) try {
-			stepGen = StepVectorGenerator.startGeneratorFromFile("1KRight.csv");
-		} catch (StepVectorGeneratorInstanceAlreadyExistsException e1) {
-			System.out.println("could not instantiate StepVectorGenerator from file");
-			stepGen = StepVectorGenerator.getInstance();
-		} else stepGen = StepVectorGenerator.getInstance();
-		
-		showMemory();
-		startTime = System.currentTimeMillis();
-		initWithParticleNo(storeType,initialParticleNo);
-		endTime = System.currentTimeMillis();
-		System.out.println("init took " + (endTime - startTime) + "ms");
-		showMemory();
-		
+		setupFilter(floorPlanPath, storeType, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath);
 		
 		StepVector nextStep;
+		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();
 		scan = new Scanner(System.in);
-		
-		visualiser = new PFVisualiser(particleStore, floorPlan);
-		visualiser.update(false);
 		
 		while (scan.nextLine() != null) {
 			nextStep = stepGen.next();
