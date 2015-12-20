@@ -95,14 +95,10 @@ public class PFController {
 		 * sort values
 		 * iterate over particles and populate new
 		 */
-		System.out.println("Resampling");
+		System.out.println("========\nResampling");
 		
 		ParticleManager particleManager = particleStore.getParticleManager();
-		double totalWeight = 0;
-		while (particleManager.hasNextActiveParticle()) {
-			particleManager.nextActiveParticle();
-			totalWeight += particleManager.getWeight();
-		}
+		double totalWeight = particleStore.getTotalWeight();
 		
 		double[] randomN = new double[maxParticleNo];
 		PFRandom randomiser = PFRandom.getInstance();
@@ -118,25 +114,32 @@ public class PFController {
 		particleManager.nextActiveParticle();
 		double weightTotal = particleManager.getWeight();
 		
-		System.out.println("total weight: " + totalWeight);
-		
 		// iterate over random numbers
 		// if weight less than current total weight seen, generate new particle
 		// else get new particle, update total weight, and try again
 		
+		double newWeight = 1.0 / maxParticleNo;
+		System.out.println("total weight by particleStore: " + totalWeight + "\nnew weights: " + newWeight);
+		
+		double scaledRandom;
+		
 		for (int j = 0; j < maxParticleNo; j++) {
-			while (randomN[j] > weightTotal) {
+			
+			scaledRandom = randomN[j] * totalWeight;
+			
+			while (scaledRandom > weightTotal) {
 				try {
 					particleManager.nextActiveParticle();
+					weightTotal += particleManager.getWeight();
 				} catch (ParticleNotFoundException e) {
-					System.out.println("no particle found, at weight " + weightTotal + ", total weight of active particles is " + totalWeight + " and current random number is " + randomN[j] + ", assuming is floating point error, so using last particle");
+					System.out.println("no particle found, at weight " + weightTotal + ", total weight of active particles is " + totalWeight + " and current random number is " + randomN[j] + ", assuming is floating point error, so using last particle, particle to be generated is #" + (j+1));
 				}
-				weightTotal += particleManager.getWeight()/totalWeight;
 			}
+			
+			//System.out.println("sampling from particle #" + particleManager.currentIndex() + " " + particleManager.summary() + " using random number " + randomN[j] + " scaled to " + scaledRandom);
 			double x = particleManager.getX();
 			double y = particleManager.getY();
-			double w = particleManager.getWeight() / totalWeight;
-			newParticles.addParticle(x,y,w);
+			newParticles.addParticle(x,y,newWeight);
 		}
 		
 		inactiveStore = particleStore;
@@ -144,6 +147,8 @@ public class PFController {
 		particleStore = newParticles;
 		visualiser.particles = particleStore;
 		activeParticles = particleStore.getParticleNo();
+		
+		System.out.println("========");
 		
 	}
 	
