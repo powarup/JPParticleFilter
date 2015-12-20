@@ -18,11 +18,11 @@ public class PFRandom {
 		
 	}
 	
-	private static boolean usingFile = false;
-	private static Random randomiser;
-	private static Queue<Double> doubles;
-	private static int cacheSize = 1000;
-	private static int cacheLimit = 10;
+	private boolean usingFile = false;
+	private Random randomiser;
+	private Queue<Double> doubles;
+	private int cacheSize = 1000;
+	private int cacheLimit = 10;
 	private BufferedReader br;
 	
 	private static PFRandom singleton;
@@ -50,6 +50,10 @@ public class PFRandom {
 	}
 
 	// Singleton methods
+
+	public static void clearInstance() {
+		singleton = null;
+	}
 	
 	public static PFRandom getInstance() {
 		if (singleton == null) {

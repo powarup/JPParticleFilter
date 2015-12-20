@@ -19,16 +19,20 @@ public class StepVectorGenerator {
 	
 	public static final double fixedLength = 0.75;
 	
-	private static boolean usingFile = false;
-	private static Queue<StepVector> steps;
-	public static int cacheSize = 1000;
-	public static int cacheLimit = 10;
+	private boolean usingFile = false;
+	private Queue<StepVector> steps;
+	public int cacheSize = 1000;
+	public int cacheLimit = 10;
 	private BufferedReader br;
 	
-	public static PFRandom randomGenerator;
+	public PFRandom randomGenerator;
 	public static StepVectorGenerator singleton;
 	
 	// Singleton methods
+	
+	public static void clearInstance() {
+		singleton = null;
+	}
 	
 	public static StepVectorGenerator getInstance() {
 		if (singleton == null) {
