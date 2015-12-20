@@ -76,7 +76,7 @@ public abstract class ParticleStore {
 	public abstract int getParticleNo();
 	public double getTotalWeight() {
 		double totalWeight = 0;
-		for (int i = 0; i < greatestIndexAssigned; i++) {
+		for (int i = 0; i <= greatestIndexAssigned; i++) {
 			totalWeight += getWeightatIndex(i);
 		}
 		return totalWeight;
