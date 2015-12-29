@@ -60,7 +60,6 @@ public class PFSwingView extends PFView {
 			synchronized (g) {
 				g.setStroke(new BasicStroke(3));
 				g.setColor(Color.black);
-				//System.out.println("Drawing " + particles.size() + " particles");
 				Iterator<Line2D> iterator = particles.iterator();
 				while (iterator.hasNext()) {
 					g.draw(iterator.next());
@@ -101,7 +100,6 @@ public class PFSwingView extends PFView {
 	}
 	
 	public PFSwingView() {
-		
 		canvas = new PFCanvasPanel();
 		canvas.FP = new HashSet<Line2D>();
 		clearParticles();
@@ -116,15 +114,13 @@ public class PFSwingView extends PFView {
 	
 	@Override
 	public void setPFCanvasSize(double maxX, double maxY) {
-//		int height = (int) Math.round(maxY);
-//		if (maxY > height) height++;
-//		int width = (int) Math.round(maxX);
-//		if (maxX > width) width++;
-		
 		double xscale = canvas_xmax / maxX;
 		double yscale = canvas_ymax / maxY;
 		
 		scale = (xscale < yscale) ? xscale : yscale;
+		if (scale == Double.NEGATIVE_INFINITY || scale == Double.POSITIVE_INFINITY || scale == Double.NaN) {
+			scale = 50;
+		}
 		System.out.println("Scaling points by by a factor of " + scale);
 		
 	}
