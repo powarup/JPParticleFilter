@@ -18,6 +18,8 @@ public class StepVectorGenerator {
 	}
 	
 	public static final double fixedLength = 0.75;
+	public static final double fixedLengthNoise = 0.075;
+	public static final double fixedAngleNoise = 7.5;
 	
 	private boolean usingFile = false;
 	private Queue<StepVector> steps;
@@ -86,7 +88,7 @@ public class StepVectorGenerator {
 				step = line.split(splitComma);
 				double length = Double.parseDouble(step[0]);
 				double angle = Double.parseDouble(step[1]);
-				steps.add(new StepVector(length, angle));
+				steps.add(new StepVector(length, angle, fixedLengthNoise, fixedAngleNoise));
 				}
 			if (line == null) {
 				System.err.println("StepVectorGenerator:: run out of steps");
@@ -112,7 +114,7 @@ public class StepVectorGenerator {
 		else {
 			double len = this.generateLength();
 			double angle = this.generateAngle();
-			StepVector nextStep = new StepVector(len,angle);
+			StepVector nextStep = new StepVector(len,angle,fixedLengthNoise,fixedAngleNoise);
 			return nextStep;
 		}
 	}
