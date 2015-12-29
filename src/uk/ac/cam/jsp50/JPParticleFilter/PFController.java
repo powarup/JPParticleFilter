@@ -21,6 +21,7 @@ public class PFController {
 	public static int activeParticles = 0;
 	
 	public static PFVisualiser visualiser;
+	public static PFRecorder recorder;
 	private static Scanner scan;
 	
 	public static void init(ParticleStoreType type) {
@@ -58,6 +59,7 @@ public class PFController {
 	
 	public static void propagate(StepVector s) {
 		System.out.println("Propagating " + activeParticles + " particles from step vector " + s.length + "," + s.angle);
+		recorder.startRecordingPropagate();
 		
 		PFRandom randomGenerator = PFRandom.getInstance();
 		
@@ -78,14 +80,15 @@ public class PFController {
 			if (crossesBoundary) {
 				particleManager.setWeight(0.0);
 				activeParticles--;
-				visualiser.addStep(lastx, lasty, currentx, currenty, true);
+				recorder.addStep(lastx, lasty, currentx, currenty, true);
 			} else {
-				visualiser.addStep(lastx, lasty, currentx, currenty, false);
+				recorder.addStep(lastx, lasty, currentx, currenty, false);
 			}
 		} catch (ParticleNotFoundException e) {
 			System.out.print(e.getMessage());
 		}
 		
+		recorder.endRecordingPropagate();
 	}
 	
 	public static void resample() throws ParticleNotFoundException {
@@ -95,7 +98,7 @@ public class PFController {
 		 * sort values
 		 * iterate over particles and populate new
 		 */
-		System.out.println("========\nResampling");
+		recorder.startRecordingResample();
 		
 		ParticleManager particleManager = particleStore.getParticleManager();
 		double totalWeight = particleStore.getTotalWeight();
@@ -145,29 +148,10 @@ public class PFController {
 		inactiveStore = particleStore;
 		inactiveStore.cleanForReuse();
 		particleStore = newParticles;
-		visualiser.particles = particleStore;
 		activeParticles = particleStore.getParticleNo();
 		
-		System.out.println("========");
+		recorder.endRecordingResample();
 		
-	}
-	
-	private static final long MEGABYTE = 1024L * 1024L;
-
-	public static long bytesToMegabytes(long bytes) {
-		return bytes / MEGABYTE;
-	}
-
-	public static void showMemory() {
-		// Get the Java runtime
-		Runtime runtime = Runtime.getRuntime();
-		// Run the garbage collector
-		runtime.gc();
-		// Calculate the used memory
-		long memory = runtime.totalMemory() - runtime.freeMemory();
-		System.out.println("Used memory in bytes: " + memory);
-		System.out.println("Used memory in megabytes: "
-				+ bytesToMegabytes(memory));
 	}
 	
 	private static void resetFilter() {
@@ -175,6 +159,7 @@ public class PFController {
 		particleStore = null;
 		inactiveStore = null;
 		visualiser = null;
+		recorder = null;
 		scan = null;
 		maxParticleNo = 0;
 		degeneracyLimit = 0;
@@ -187,6 +172,8 @@ public class PFController {
 		resetFilter();
 		long startTime;
 		long endTime;
+		
+		recorder = new PFRecorder(true, true, 1000, floorPlanPath, storeType, randomFilePath, stepVectorFilePath);
 		
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;
@@ -205,23 +192,18 @@ public class PFController {
 			System.out.println("could not instantiate StepVectorGenerator from file");
 		}
 		
-		showMemory();
 		startTime = System.currentTimeMillis();
 		initWithParticleNo(storeType,initialParticleNo);
 		endTime = System.currentTimeMillis();
 		System.out.println("init took " + (endTime - startTime) + "ms");
-		showMemory();
 		
-		visualiser = new PFVisualiser(particleStore, floorPlan);
+		visualiser = new PFVisualiser(floorPlan);
 		visualiser.update(false);
 	}
 	
 	public static void main(String[] args) {
 		
 		// args are: floor plan path; object/array for store type; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
-		
-		long startTime;
-		long endTime;
 		
 		// get setup options
 		
@@ -264,22 +246,16 @@ public class PFController {
 		
 		while (scan.nextLine() != null) {
 			nextStep = stepGen.next();
-			startTime = System.currentTimeMillis();
 			propagate(nextStep);
-			endTime = System.currentTimeMillis();
-			System.out.println("propagate took " + (endTime - startTime) + "ms");
-			showMemory();
+			System.out.println(recorder.recordings[recorder.currentRecordingIndex-1].summary());
 			visualiser.update(true);
 			if (scan.nextLine() != null) {
 				visualiser.update(false);
 			}
 			boolean degeneracyClose = activeParticles <= degeneracyLimit;
 			if (degeneracyClose) try {
-				startTime = System.currentTimeMillis();
 				resample();
-				endTime = System.currentTimeMillis();
-				System.out.println("resample took " + (endTime - startTime) + "ms");
-				showMemory();
+				System.out.println(recorder.recordings[recorder.currentRecordingIndex-1].summary());
 			} catch (ParticleNotFoundException e) {
 				System.err.println(e.getMessage());
 			}
