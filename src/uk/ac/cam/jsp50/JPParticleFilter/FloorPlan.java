@@ -45,6 +45,7 @@ public class FloorPlan {
 //		}
 		
 		public boolean crosses(double o_x1, double o_y1, double o_x2, double o_y2) {
+			if (x1 == x2 && y1 == y2) return false;
 			//System.out.println("Checking (" + o_x1 + "," + o_y1 + ") -> (" + o_x2 + "," + o_y2 + ") against (" + this.x1 + "," + this.y1 + ") -> (" + this.x2 + "," + this.y2 + ")");
 			
 			// SPECIAL CASE: infinite gradient
@@ -159,6 +160,9 @@ public class FloorPlan {
 	}
 	
 	public boolean pointIsInsideRoom(double x, double y) { // essentially ray casting algorithm, horizontal ray fixed at y then fixed at x
+		
+		if (edges.size() <= 2) return true;
+		
 		boolean isInsideX = false;
 		boolean isInsideY = false;
 		int noCrossings;
