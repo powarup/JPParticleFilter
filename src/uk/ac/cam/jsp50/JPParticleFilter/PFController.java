@@ -1,5 +1,8 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -168,17 +171,17 @@ public class PFController {
 		StepVectorGenerator.clearInstance();
 	}
 	
-	public static void setupFilter(String floorPlanPath, ParticleStoreType storeType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath) {
+	public static void setupFilter(InputStream floorPlanStream, ParticleStoreType storeType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise) {
 		resetFilter();
 		long startTime;
 		long endTime;
 		
-		recorder = new PFRecorder(true, true, 1000, floorPlanPath, storeType, randomFilePath, stepVectorFilePath);
+		recorder = new PFRecorder(true, true, 1000, storeType, randomFilePath, stepVectorFilePath);
 		
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;
 		
-		floorPlan = new FloorPlan(floorPlanPath);
+		floorPlan = new FloorPlan(floorPlanStream);
 			
 		if (randomFilePath != null) try {
 			PFRandom.startInstanceWithFile(randomFilePath);
@@ -197,11 +200,13 @@ public class PFController {
 		endTime = System.currentTimeMillis();
 		System.out.println("init took " + (endTime - startTime) + "ms");
 		
-		visualiser = new PFVisualiser(floorPlan);
-		visualiser.update(false);
+		if (visualise) {
+			visualiser = new PFVisualiser(floorPlan);
+			visualiser.update(false);
+		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		
 		// args are: floor plan path; object/array for store type; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
 		
@@ -238,7 +243,9 @@ public class PFController {
 			break;
 		}
 		
-		setupFilter(floorPlanPath, storeType, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath);
+		InputStream floorPlanStream = new FileInputStream(floorPlanPath);
+		
+		setupFilter(floorPlanStream, storeType, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true);
 		
 		StepVector nextStep;
 		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();

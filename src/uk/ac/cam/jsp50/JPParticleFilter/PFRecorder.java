@@ -66,7 +66,7 @@ public class PFRecorder {
 	public boolean recordingPropagate = false, recordingResample = false;
 	public int currentRecordingIndex = 0; // points to current recording, or if no recording is in progress, next available
 	
-	public PFRecorder(boolean collectingStatistics, boolean collectingSteps, int maxRecordingNo, String floorPlanPath, ParticleStoreType storeType, String randomFilePath, String stepVectorFilePath) {
+	public PFRecorder(boolean collectingStatistics, boolean collectingSteps, int maxRecordingNo, ParticleStoreType storeType, String randomFilePath, String stepVectorFilePath) {
 		this.collectingStatistics = collectingStatistics;
 		this.collectingSteps = collectingSteps;
 		this.maxRecordingNo = maxRecordingNo;

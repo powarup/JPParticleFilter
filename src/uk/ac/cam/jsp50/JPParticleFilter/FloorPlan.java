@@ -1,8 +1,9 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 //this floorplan data structure handles line intersection by checking the line input against all individual edges.
@@ -115,15 +116,15 @@ public class FloorPlan {
 	
 	public ArrayList<Edge> edges;
 	
-	public FloorPlan(String pathToCSV) {
-		System.out.println("loading floorplan from " + pathToCSV);
+	public FloorPlan(InputStream csvStream) {
+		System.out.println("loading floorplan from stream");
 		edges = new ArrayList<Edge>();
 		BufferedReader br;
 		String line = "";
 		String splitComma = ",";
 		String[] coordinates;
 		try {
-			br = new BufferedReader(new FileReader(pathToCSV));
+			br = new BufferedReader(new InputStreamReader(csvStream));
 			while ((line = br.readLine()) != null) {
 				coordinates = line.split(splitComma);
 				//got coordinates, store in data structure, here an arraylist of Edges
