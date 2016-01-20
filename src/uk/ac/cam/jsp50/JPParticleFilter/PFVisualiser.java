@@ -3,18 +3,18 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import uk.ac.cam.jsp50.JPParticleFilter.FloorPlan.Edge;
+import uk.ac.cam.jsp50.JPParticleFilter.PFFloorPlan.Edge;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 
 public class PFVisualiser {
 	
-	public FloorPlan floorPlan;
+	public PFFloorPlan floorPlan;
 	PFView view;
 	PFRecorder recorder;
 	
-	public PFVisualiser(FloorPlan _floorPlan) {
+	public PFVisualiser(PFFloorPlan _floorPlan) {
 		this.floorPlan = _floorPlan;
 		this.view = PFView.getView();
 		this.view.setPFCanvasSize(floorPlan.maxX,floorPlan.maxY);

@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 import javax.swing.*;
 
-import uk.ac.cam.jsp50.JPParticleFilter.FloorPlan.Edge;
+import uk.ac.cam.jsp50.JPParticleFilter.PFFloorPlan.Edge;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 
 public class PFSwingView extends PFView {

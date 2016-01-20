@@ -17,7 +17,7 @@ public class PFController {
 		OBJECT,ARRAY
 	}
 	
-	public static FloorPlan floorPlan;
+	public static PFFloorPlan floorPlan;
 	public static ParticleStore particleStore, inactiveStore;
 	public static int maxParticleNo;
 	public static int degeneracyLimit;
@@ -52,7 +52,7 @@ public class PFController {
 			x = randomGenerator.nextDouble() * floorPlan.maxX;
 			y = randomGenerator.nextDouble() * floorPlan.maxY;
 						
-			if (floorPlan.pointIsInsideRoom(x, y)) {
+			if (floorPlan.pointIsInsidePlan(x, y)) {
 				particleStore.addParticle(x,y,weight);
 				activeParticles++;
 			}
@@ -79,7 +79,7 @@ public class PFController {
 			currenty = particleManager.getY();
 			
 			
-			boolean crossesBoundary = floorPlan.didCrossBoundary(lastx,lasty,currentx,currenty);
+			boolean crossesBoundary = floorPlan.doesCrossBoundary(lastx,lasty,currentx,currenty);
 			if (crossesBoundary) {
 				particleManager.setWeight(0.0);
 				activeParticles--;
@@ -181,7 +181,7 @@ public class PFController {
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;
 		
-		floorPlan = new FloorPlan(floorPlanStream);
+		floorPlan = new PFNaiveFloorPlan(floorPlanStream);
 			
 		if (randomFilePath != null) try {
 			PFRandom.startInstanceWithFile(randomFilePath);
