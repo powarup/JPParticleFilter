@@ -1,6 +1,5 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFFloorPlan.Edge;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 
 public abstract class PFView {

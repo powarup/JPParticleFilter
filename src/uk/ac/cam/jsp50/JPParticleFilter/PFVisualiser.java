@@ -3,7 +3,6 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFFloorPlan.Edge;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
