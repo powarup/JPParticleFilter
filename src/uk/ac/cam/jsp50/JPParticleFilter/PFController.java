@@ -176,7 +176,7 @@ public class PFController {
 		long startTime;
 		long endTime;
 		
-		recorder = new PFRecorder(true, true, 1000, storeType, randomFilePath, stepVectorFilePath);
+		recorder = new PFRecorder(true, true, true, 1000, storeType, randomFilePath, stepVectorFilePath);
 		
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;

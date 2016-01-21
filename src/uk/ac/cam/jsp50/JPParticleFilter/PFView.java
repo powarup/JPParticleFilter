@@ -16,7 +16,9 @@ public abstract class PFView {
 	public abstract void drawViolation(Step s);
 
 	public abstract void drawParticle(double x, double y);
-
+	
+	public abstract void drawPosition(double x, double y, double stdev);
+	
 	public abstract void drawFPEdge(Edge e);
 
 	public abstract void clearParticles();

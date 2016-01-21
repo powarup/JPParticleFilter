@@ -3,6 +3,7 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Position;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
@@ -48,6 +49,9 @@ public class PFVisualiser {
 		} catch (ParticleNotFoundException e) {
 			System.err.println(e.getMessage());
 		}
+		
+		Position position = recorder.getPosition();
+		view.drawPosition(position.x, position.y, position.stdev);
 				
 		view.redraw();
 		

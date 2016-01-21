@@ -30,11 +30,12 @@ public class PFSwingView extends PFView {
 		public Collection<Line2D> FP;
 		public Collection<Line2D> steps;
 		public Collection<Line2D> violations;
+		public Line2D position;
 		
-
 		public Collection<Line2D> next_particles;
 		public Collection<Line2D> next_steps;
 		public Collection<Line2D> next_violations;
+		public Line2D next_position;
 
 		public PFCanvasPanel() {
 			setBorder(BorderFactory.createLineBorder(Color.black));
@@ -79,6 +80,15 @@ public class PFSwingView extends PFView {
 			}
 		}
 		
+		private void drawPosition(Graphics2D g) {
+			synchronized (g) {
+				g.setStroke(new BasicStroke(3));
+				g.setColor(Color.red);
+				g.draw(position);
+				g.setStroke(new BasicStroke(1));
+			}
+		}
+		
 	    public void paintComponent(Graphics g) {
 	        super.paintComponent(g);       
 	        Graphics2D g2d = (Graphics2D) g;
@@ -86,6 +96,7 @@ public class PFSwingView extends PFView {
 	        drawFP(g2d);
 	        drawSteps(g2d);
 	        drawParticles(g2d);
+	        drawPosition(g2d);
 	    } 
 	    
 	    public void loadNext() {
@@ -95,6 +106,7 @@ public class PFSwingView extends PFView {
 	    	next_steps = new HashSet<Line2D>();
 	    	this.violations = this.next_violations;
 	    	next_violations = new HashSet<Line2D>();
+	    	this.position = next_position;
 	    }
 	}
 	
@@ -159,6 +171,11 @@ public class PFSwingView extends PFView {
 	public void drawViolation(Step s) {
 		Line2D stepLine = new Line2D.Double(s.x1 * scale, s.y1 * scale, s.x2 * scale, s.y2 * scale);
 		canvas.next_violations.add(stepLine);
+	}
+
+	@Override
+	public void drawPosition(double x, double y, double stdev) {
+		canvas.next_position = new Line2D.Double(x * scale, y * scale, x * scale, y * scale);
 	}
 
 	
