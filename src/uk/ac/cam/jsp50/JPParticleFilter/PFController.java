@@ -22,6 +22,7 @@ public class PFController {
 	public static int maxParticleNo;
 	public static int degeneracyLimit;
 	public static int activeParticles = 0;
+	public static ParticleStoreType currentStoreType;
 	
 	public static PFVisualiser visualiser;
 	public static PFRecorder recorder;
@@ -32,6 +33,8 @@ public class PFController {
 	}
 	
 	public static void initWithParticleNo(ParticleStoreType type, int particleNo) {
+		System.out.println("initialising");
+		currentStoreType = type;
 		switch (type) {
 		case OBJECT:
 			particleStore = new ObjectParticleStore();
@@ -48,7 +51,6 @@ public class PFController {
 		
 		double weight = 1.0/particleNo;
 		while (activeParticles < particleNo) {
-			//System.out.println("Making " + particleNo + " particles. Current #active particles: " + activeParticles);
 			x = randomGenerator.nextDouble() * floorPlan.maxX;
 			y = randomGenerator.nextDouble() * floorPlan.maxY;
 						
@@ -60,8 +62,12 @@ public class PFController {
 		System.out.println("initialised with " + activeParticles + " particles");
 	}
 	
+	public static void reinit() {
+		init(currentStoreType);
+	}
+	
 	public static void propagate(StepVector s) {
-		System.out.println("Propagating " + activeParticles + " particles from step vector " + s.length + "," + s.angle);
+		//System.out.println("Propagating " + activeParticles + " particles from step vector " + s.length + "," + s.angle);
 		recorder.startRecordingPropagate();
 		
 		PFRandom randomGenerator = PFRandom.getInstance();
@@ -92,6 +98,8 @@ public class PFController {
 		}
 		
 		recorder.endRecordingPropagate();
+		
+		if (activeParticles <=0) reinit();
 	}
 	
 	public static void resample() throws ParticleNotFoundException {
@@ -125,7 +133,7 @@ public class PFController {
 		// else get new particle, update total weight, and try again
 		
 		double newWeight = 1.0 / maxParticleNo;
-		System.out.println("total weight by particleStore: " + totalWeight + "\nnew weights: " + newWeight);
+		//System.out.println("total weight by particleStore: " + totalWeight + "\nnew weights: " + newWeight);
 		
 		double scaledRandom;
 		
