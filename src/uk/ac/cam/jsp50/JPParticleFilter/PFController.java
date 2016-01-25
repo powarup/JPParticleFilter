@@ -171,12 +171,12 @@ public class PFController {
 		StepVectorGenerator.clearInstance();
 	}
 	
-	public static void setupFilter(InputStream floorPlanStream, ParticleStoreType storeType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise) {
+	public static void setupFilter(InputStream floorPlanStream, ParticleStoreType storeType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise, boolean recorderShouldCollectMemoryStats, boolean recorderShouldCollectTimeStats, boolean recorderShouldCollectSteps, boolean recorderShouldTrackPosition) {
 		resetFilter();
 		long startTime;
 		long endTime;
 		
-		recorder = new PFRecorder(true, true, true, 1000, storeType, randomFilePath, stepVectorFilePath);
+		recorder = new PFRecorder(recorderShouldCollectMemoryStats, recorderShouldCollectTimeStats, recorderShouldCollectSteps, recorderShouldTrackPosition, 1000, storeType, randomFilePath, stepVectorFilePath);
 		
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;
@@ -245,7 +245,7 @@ public class PFController {
 		
 		InputStream floorPlanStream = new FileInputStream(floorPlanPath);
 		
-		setupFilter(floorPlanStream, storeType, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true);
+		setupFilter(floorPlanStream, storeType, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
 		
 		StepVector nextStep;
 		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();

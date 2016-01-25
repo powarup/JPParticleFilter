@@ -67,7 +67,7 @@ public class PFRecorder {
 		}
 	}
 
-	public final boolean collectingStatistics, collectingSteps, collectingPosition;
+	public final boolean collectingMemoryStatistics, collectingTimeStatistics, collectingSteps, collectingPosition;
 	public final int maxRecordingNo;
 
 	private int currentGeneration = 1;
@@ -80,13 +80,14 @@ public class PFRecorder {
 	public boolean recordingPropagate = false, recordingResample = false;
 	public int currentRecordingIndex = 0; // points to current recording, or if no recording is in progress, next available
 
-	public PFRecorder(boolean collectingStatistics, boolean collectingSteps, boolean collectingPosition, int maxRecordingNo, ParticleStoreType storeType, String randomFilePath, String stepVectorFilePath) {
-		this.collectingStatistics = collectingStatistics;
+	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, int maxRecordingNo, ParticleStoreType storeType, String randomFilePath, String stepVectorFilePath) {
+		this.collectingMemoryStatistics = collectingMemoryStatistics;
+		this.collectingTimeStatistics = collectingMemoryStatistics;
 		this.collectingSteps = collectingSteps;
 		this.collectingPosition = collectingPosition;
 		this.maxRecordingNo = maxRecordingNo;
 
-		if (collectingStatistics) { // initialise recording array so recording occurs in place
+		if (collectingMemoryStatistics || collectingTimeStatistics) { // initialise recording array so recording occurs in place
 			recordings = new PFRecording[maxRecordingNo];
 			for (int i = 0; i < maxRecordingNo; i++) {
 				recordings[i] = new PFRecording();
@@ -160,15 +161,15 @@ public class PFRecorder {
 	// endRecordingPropagate MUST be called when collecting steps, to keep lastSteps in line with most recent generation
 
 	public void startRecordingPropagate() {
-		if (collectingStatistics) {
+		if (collectingMemoryStatistics || collectingTimeStatistics) {
 			if (recordingPropagate) endRecordingPropagate();
 			if (recordingResample) endRecordingResample();
 			recordingPropagate = true;
 			PFRecording currentRecording = recordings[currentRecordingIndex];
 			currentRecording.type = PFRecordingType.PROPAGATE;
 			currentRecording.startParticleNo = getActiveParticleNo();
-			currentRecording.startMemory = measureMemory();
-			currentRecording.startTime = System.currentTimeMillis();
+			if (collectingMemoryStatistics) currentRecording.startMemory = measureMemory();
+			if (collectingTimeStatistics) currentRecording.startTime = System.currentTimeMillis();
 		}
 	}
 
@@ -182,9 +183,9 @@ public class PFRecorder {
 			recordingPropagate = false;
 			PFRecording currentRecording = recordings[currentRecordingIndex];
 			currentRecording.endParticleNo = PFController.activeParticles;
-			currentRecording.endTime = System.currentTimeMillis();
-			currentRecording.endMemory = measureMemory();
-			currentRecording.position = getPosition();
+			if (collectingTimeStatistics) currentRecording.endTime = System.currentTimeMillis();
+			if (collectingMemoryStatistics) currentRecording.endMemory = measureMemory();
+			if (collectingPosition) currentRecording.position = getPosition();
 			incrementCurrentRecordingIndex();
 		}
 
@@ -192,15 +193,15 @@ public class PFRecorder {
 	}
 
 	public void startRecordingResample() {
-		if (collectingStatistics) {
+		if (collectingMemoryStatistics || collectingTimeStatistics) {
 			if (recordingPropagate) endRecordingPropagate();
 			if (recordingResample) endRecordingResample();
 			recordingResample = true;
 			PFRecording currentRecording = recordings[currentRecordingIndex];
 			currentRecording.type = PFRecordingType.RESAMPLE;
 			currentRecording.startParticleNo = getActiveParticleNo();
-			currentRecording.startMemory = measureMemory();
-			currentRecording.startTime = System.currentTimeMillis();
+			if (collectingMemoryStatistics) currentRecording.startMemory = measureMemory();
+			if (collectingTimeStatistics) currentRecording.startTime = System.currentTimeMillis();
 		}
 	}
 
@@ -209,8 +210,8 @@ public class PFRecorder {
 			recordingResample = false;
 			PFRecording currentRecording = recordings[currentRecordingIndex];
 			currentRecording.endParticleNo = PFController.activeParticles;
-			currentRecording.endTime = System.currentTimeMillis();
-			currentRecording.endMemory = measureMemory();
+			if (collectingTimeStatistics) currentRecording.endTime = System.currentTimeMillis();
+			if (collectingMemoryStatistics) currentRecording.endMemory = measureMemory();
 			incrementCurrentRecordingIndex();
 		}
 
