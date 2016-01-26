@@ -24,10 +24,10 @@ public abstract class PFComparison {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
 
 		PFRecorder recorder = PFController.recorder;
-		for (int j = 0; j < recorder.recordings.length && j < recorder.currentRecordingIndex; j++) {
+		for (int j = 0; j < recorder.currentRecordingIndex; j++) {
 			PFRecording recording = recorder.recordings[j];
-			//System.out.println(recording.endMemory);
-			writer.write(String.valueOf(recording.endMemory) + "\n");
+			long timeTaken = recording.endTime - recording.startTime;
+			writer.write(String.valueOf(recording.endMemory) + "," + String.valueOf(timeTaken) + "\n");
 		}
 		
 		writer.close();
