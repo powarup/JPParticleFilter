@@ -12,10 +12,6 @@ import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 import uk.ac.cam.jsp50.JPParticleFilter.StepVectorGenerator.StepVectorGeneratorInstanceAlreadyExistsException;
 
 public class PFController {
-
-	public enum ParticleStoreType {
-		OBJECT,ARRAY
-	}
 	
 	public static PFFloorPlan floorPlan;
 	public static ParticleStore particleStore, inactiveStore;
