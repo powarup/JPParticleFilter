@@ -21,7 +21,7 @@ public class PFRandom {
 	private boolean usingFile = false;
 	private Random randomiser;
 	private Queue<Double> doubles;
-	private int cacheSize = 1000;
+	private int cacheSize = 10000;
 	private int cacheLimit = 10;
 	private BufferedReader br;
 	
@@ -79,7 +79,7 @@ public class PFRandom {
 	// object methods
 	
 	private void loadCache() {
-		System.out.println("PFRandom:: filling cache");
+		//System.out.println("PFRandom:: filling cache");
 		String line = "";
 		try {
 			while ((line = br.readLine()) != null && doubles.size() < cacheSize) {
