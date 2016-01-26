@@ -76,21 +76,21 @@ public class PFMultinomialResamplingTest {
 	@Test
 	public void twoParticlesWithLowerHalfRandomsResamplesCorrectly() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("wideVertical.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 2, 2, 2, "10KRandoms_lowerhalf.txt", null, false, false, false, false, false); //TODO: use empty map
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 2, 2, 2, "10KRandoms_lowerhalf.txt", null, false, false, false, false, false); //TODO: use empty map
 		checkResampleAlwaysUsesIndex(0);
 	}
 	
 	@Test
 	public void twoParticlesWithUpperHalfRandomsResamplesCorrectly() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("wideVertical.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 2, 2, 2, "10KRandoms_upperhalf.txt", null, false, false, false, false, false); //TODO: use empty map
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 2, 2, 2, "10KRandoms_upperhalf.txt", null, false, false, false, false, false); //TODO: use empty map
 		checkResampleAlwaysUsesIndex(1);
 	}
 	
 	@Test
 	public void threeParticlesWithLowerThirdRandomsResamplesCorrectly() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("wideVertical.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 3, 3, 3, "10KRandoms_lowerthird.txt", null, false, false, false, false, false); //TODO: use empty map
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 3, 3, 3, "10KRandoms_lowerthird.txt", null, false, false, false, false, false); //TODO: use empty map
 		checkResampleAlwaysUsesIndex(0);
 	}
 	

@@ -17,15 +17,15 @@ public class ParticleStoreComparison extends PFComparison {
 		initialParticleNo = 100;
 		maxParticleNo = 100;
 		degeneracyLimit = 50;
-		randomFilePath = "particlerandoms1.txt";
+		randomFilePath = "comparisonData/particlerandoms1.txt";
 		// object (memory run)
 		floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
-		runAndExport(100,"comparisonData/particleComparison object 100 simple memory.csv");
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
+		runAndExport(100,"comparisonResults/particleComparison object 100 simple memory.csv");
 		// array (memory run)
 		floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.ARRAY, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
-		runAndExport(100,"comparisonData/particleComparison array 100 simple memory.csv");
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.ARRAY, FloorPlanType.NAIVE, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
+		runAndExport(100,"comparisonResults/particleComparison array 100 simple memory.csv");
 
 		// 100 particles - complex
 		// object
@@ -37,15 +37,15 @@ public class ParticleStoreComparison extends PFComparison {
 		initialParticleNo = 1000;
 		maxParticleNo = 1000;
 		degeneracyLimit = 500;
-		randomFilePath = "particlerandoms3.txt";
+		randomFilePath = "comparisonData/particlerandoms3.txt";
 		// object (memory run)
 		floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
-		runAndExport(100,"comparisonData/particleComparison object 1000 simple memory.csv");
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
+		runAndExport(100,"comparisonResults/particleComparison object 1000 simple memory.csv");
 		// array (memory run)
 		floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.ARRAY, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
-		runAndExport(100,"comparisonData/particleComparison array 1000 simple memory.csv");
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.ARRAY, FloorPlanType.NAIVE, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
+		runAndExport(100,"comparisonResults/particleComparison array 1000 simple memory.csv");
 
 
 		// 1000 particles - complex
@@ -57,15 +57,15 @@ public class ParticleStoreComparison extends PFComparison {
 		initialParticleNo = 10000;
 		maxParticleNo = 10000;
 		degeneracyLimit = 5000;
-		randomFilePath = "particlerandoms7.txt";
+		randomFilePath = "comparisonData/particlerandoms7.txt";
 		// object (memory run)
 		floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
-		runAndExport(100,"comparisonData/particleComparison object 10000 simple memory.csv");
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
+		runAndExport(100,"comparisonResults/particleComparison object 10000 simple memory.csv");
 		// array (memory run)
 		floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.ARRAY, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
-		runAndExport(100,"comparisonData/particleComparison array 10000 simple memory.csv");
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.ARRAY, FloorPlanType.NAIVE, initialParticleNo, maxParticleNo, degeneracyLimit, randomFilePath, stepVectorFilePath, visualise, true, false, false, false);
+		runAndExport(100,"comparisonResults/particleComparison array 10000 simple memory.csv");
 	}
 
 

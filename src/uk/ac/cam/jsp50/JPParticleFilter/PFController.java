@@ -175,7 +175,7 @@ public class PFController {
 		StepVectorGenerator.clearInstance();
 	}
 	
-	public static void setupFilter(InputStream floorPlanStream, ParticleStoreType storeType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise, boolean recorderShouldCollectMemoryStats, boolean recorderShouldCollectTimeStats, boolean recorderShouldCollectSteps, boolean recorderShouldTrackPosition) {
+	public static void setupFilter(InputStream floorPlanStream, ParticleStoreType storeType, FloorPlanType fpType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise, boolean recorderShouldCollectMemoryStats, boolean recorderShouldCollectTimeStats, boolean recorderShouldCollectSteps, boolean recorderShouldTrackPosition) {
 		resetFilter();
 		long startTime;
 		long endTime;
@@ -185,7 +185,19 @@ public class PFController {
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;
 		
-		floorPlan = new PFNaiveFloorPlan(floorPlanStream);
+		switch (fpType) {
+		case NAIVE:
+			floorPlan = new PFNaiveFloorPlan(floorPlanStream);
+			break;
+
+		case BITMAP:
+			floorPlan = new PFBitmapFloorPlan(floorPlanStream);
+			break;
+			
+		default:
+			floorPlan = new PFNaiveFloorPlan(floorPlanStream);
+			break;
+		}
 			
 		if (randomFilePath != null) try {
 			PFRandom.startInstanceWithFile(randomFilePath);
