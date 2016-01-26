@@ -261,7 +261,7 @@ public class PFController {
 		
 		InputStream floorPlanStream = new FileInputStream(floorPlanPath);
 		
-		setupFilter(floorPlanStream, storeType, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
+		setupFilter(floorPlanStream, storeType, FloorPlanType.NAIVE, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
 		
 		StepVector nextStep;
 		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();
