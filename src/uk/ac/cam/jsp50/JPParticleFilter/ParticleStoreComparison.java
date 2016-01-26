@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFController.ParticleStoreType;
-
 public class ParticleStoreComparison extends PFComparison {
 
 	public static void main(String[] args) throws IOException {

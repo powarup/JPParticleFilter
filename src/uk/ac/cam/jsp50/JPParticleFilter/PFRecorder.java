@@ -2,7 +2,6 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 
 import java.util.HashSet;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFController.ParticleStoreType;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 

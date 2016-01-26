@@ -7,8 +7,6 @@ import java.io.FileNotFoundException;
 
 import org.junit.Test;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFController.ParticleStoreType;
-
 public class PropagateCorrectnessTest {
 
 	@Test

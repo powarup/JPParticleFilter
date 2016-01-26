@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFController.ParticleStoreType;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 
