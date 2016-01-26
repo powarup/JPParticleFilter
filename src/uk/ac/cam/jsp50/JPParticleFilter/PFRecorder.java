@@ -81,7 +81,7 @@ public class PFRecorder {
 
 	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, int maxRecordingNo, ParticleStoreType storeType, String randomFilePath, String stepVectorFilePath) {
 		this.collectingMemoryStatistics = collectingMemoryStatistics;
-		this.collectingTimeStatistics = collectingMemoryStatistics;
+		this.collectingTimeStatistics = collectingTimeStatistics;
 		this.collectingSteps = collectingSteps;
 		this.collectingPosition = collectingPosition;
 		this.maxRecordingNo = maxRecordingNo;
