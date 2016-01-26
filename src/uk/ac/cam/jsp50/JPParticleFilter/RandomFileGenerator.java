@@ -17,7 +17,17 @@ public class RandomFileGenerator {
 	}
 	
 	public static void main(String[] args) throws NumberFormatException, FileNotFoundException, UnsupportedEncodingException {
-		writeRandomsToFile(Integer.parseInt(args[0]), args[1]);
+		if (args[2] != null) {
+			int n = Integer.parseInt(args[2]);
+			String path;
+			for (int i = 1; i <= n; i++) {
+				path = args[1] + String.valueOf(i) + ".txt";
+				System.out.println(path);
+				writeRandomsToFile(Integer.parseInt(args[0]), path);
+			}
+		} else {
+			writeRandomsToFile(Integer.parseInt(args[0]), args[1]);
+		}
 	}
 	
 }
