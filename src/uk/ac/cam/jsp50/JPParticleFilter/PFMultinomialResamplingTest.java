@@ -18,28 +18,28 @@ public class PFMultinomialResamplingTest {
 	@Test
 	public void tenParticleTotalWeightStaysCorrect() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 10, 10, 10, null, null, false, false, false, false, false);
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 10, 10, 10, null, null, false, false, false, false, false);
 		checkResampleKeepsTotalWeightCorrectly();
 	}
 	
 	@Test
 	public void hundredParticleTotalWeightStaysCorrect() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 100, 100, 100, null, null, false, false, false, false, false);
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 100, 100, 100, null, null, false, false, false, false, false);
 		checkResampleKeepsTotalWeightCorrectly();
 	}
 	
 	@Test
 	public void thousandParticleTotalWeightStaysCorrect() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 1000, 1000, 1000, null, null, false, false, false, false, false);
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 1000, 1000, 1000, null, null, false, false, false, false, false);
 		checkResampleKeepsTotalWeightCorrectly();
 	}
 
 	@Test @Ignore
 	public void tenthousandParticleTotalWeightStaysCorrect() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("polygon1.csv");
-		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, 10000, 10000, 10000, null, null, false, false, false, false, false);
+		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 10000, 10000, 10000, null, null, false, false, false, false, false);
 		checkResampleKeepsTotalWeightCorrectly();
 	}
 
