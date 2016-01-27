@@ -13,6 +13,7 @@ public abstract class PFFloorPlan {
 	public double maxX, maxY;
 	public ArrayList<Edge> edges;
 	public EdgeType edgeType = EdgeType.LINE2D;
+	public boolean closed;
 
 	public abstract boolean doesCrossBoundary(double x1, double y1, double x2, double y2); // TODO return crossing type enum, include crosses doorway
 
@@ -28,6 +29,7 @@ public abstract class PFFloorPlan {
 		Edge newEdge;
 		try {
 			br = new BufferedReader(new InputStreamReader(csvStream));
+			if ((line = br.readLine()) != null) closed = line.equals("1");
 			while ((line = br.readLine()) != null) {
 				coordinates = line.split(splitComma);
 				//got coordinates, store in data structure, here an arraylist of Edges
@@ -35,6 +37,7 @@ public abstract class PFFloorPlan {
 				double y1 = Double.parseDouble(coordinates[1]);
 				double x2 = Double.parseDouble(coordinates[2]);
 				double y2 = Double.parseDouble(coordinates[3]);
+				//System.out.println("storing edge (" + x1 + "," + y1 + ") -> (" + x2 + "," + y2 + ")");
 				switch (edgeType) {
 				case LINE2D:
 					newEdge = new PFLine2DEdge(x1, y1, x2, y2);
@@ -49,12 +52,13 @@ public abstract class PFFloorPlan {
 				edges.add(newEdge);
 				if (x1 > maxX) maxX = x1;
 				if (x2 > maxX) maxX = x2;
-				if (y1 > maxY) maxY = x1;
-				if (y2 > maxY) maxY = x2;
+				if (y1 > maxY) maxY = y1;
+				if (y2 > maxY) maxY = y2;
 			}
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
+		System.out.println("loaded " + edges.size() + " edges from stream");
 	}
 	
 }

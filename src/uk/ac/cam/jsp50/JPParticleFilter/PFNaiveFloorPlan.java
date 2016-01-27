@@ -3,7 +3,7 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.io.InputStream;
 
 public class PFNaiveFloorPlan extends PFFloorPlan {
-	
+		
 	public PFNaiveFloorPlan(InputStream csvStream) {
 		this(csvStream, null);
 	}
@@ -29,6 +29,8 @@ public class PFNaiveFloorPlan extends PFFloorPlan {
 	}
 
 	public boolean pointIsInsidePlan(double x, double y) { // essentially ray casting algorithm, horizontal ray fixed at y then fixed at x
+		
+		if (!closed) return true;
 		
 		if (edges.size() <= 2) return true;
 		
