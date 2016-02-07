@@ -190,8 +190,8 @@ public class PFController {
 			floorPlan = new PFNaiveFloorPlan(floorPlanStream);
 			break;
 
-		case BITMAP:
-			floorPlan = new PFBitmapFloorPlan(floorPlanStream);
+		case SIMPLE_BITMAP:
+			floorPlan = new PFSimpleBitmapFloorPlan(floorPlanStream,0.1);
 			break;
 			
 		default:

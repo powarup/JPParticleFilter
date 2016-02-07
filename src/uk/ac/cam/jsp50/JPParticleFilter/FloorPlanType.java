@@ -1,5 +1,5 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
 public enum FloorPlanType {
-	NAIVE,BITMAP
+	NAIVE,SIMPLE_BITMAP, COMPLEX_BITMAP
 }
