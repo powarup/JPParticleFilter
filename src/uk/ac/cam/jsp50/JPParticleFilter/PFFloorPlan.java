@@ -61,4 +61,13 @@ public abstract class PFFloorPlan {
 		System.out.println("loaded " + edges.size() + " edges from stream");
 	}
 	
+	public int findEdgeCrossings(double x1, double y1, double x2, double y2) {
+		int noCrossings = 0;
+		for (Edge e : edges) {
+			if (e.crosses(x1, y1, x2, y2)) {
+				noCrossings++;
+			}
+		}
+		return noCrossings;
+	}
 }
