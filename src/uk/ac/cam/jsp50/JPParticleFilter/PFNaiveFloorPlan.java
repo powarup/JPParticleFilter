@@ -9,7 +9,7 @@ public class PFNaiveFloorPlan extends PFFloorPlan {
 	}
 	
 	public PFNaiveFloorPlan(InputStream csvStream, EdgeType edgeType) {
-		this.edgeType = (edgeType == null) ? EdgeType.LINE2D : edgeType;
+		this.edgeType = (edgeType == null) ? EdgeType.JP : edgeType;
 		getEdgesFromStream(csvStream);
 	}
 
