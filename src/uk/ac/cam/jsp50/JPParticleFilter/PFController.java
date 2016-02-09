@@ -191,7 +191,7 @@ public class PFController {
 			break;
 
 		case SIMPLE_BITMAP:
-			floorPlan = new PFSimpleBitmapFloorPlan(floorPlanStream,0.1);
+			floorPlan = new PFSimpleBitmapFloorPlan(floorPlanStream,0.05);
 			break;
 			
 		default:
@@ -267,7 +267,7 @@ public class PFController {
 		
 		InputStream floorPlanStream = new FileInputStream(floorPlanPath);
 		
-		setupFilter(floorPlanStream, storeType, FloorPlanType.NAIVE, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
+		setupFilter(floorPlanStream, storeType, FloorPlanType.SIMPLE_BITMAP, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
 		
 		StepVector nextStep;
 		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();
