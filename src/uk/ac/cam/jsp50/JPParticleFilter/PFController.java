@@ -206,7 +206,7 @@ public class PFController {
 		}
 		
 		if (stepVectorFilePath != null) try {
-			StepVectorGenerator.startGeneratorFromFile("1KRight.csv");
+			StepVectorGenerator.startGeneratorFromFile(stepVectorFilePath);
 		} catch (StepVectorGeneratorInstanceAlreadyExistsException e1) {
 			System.out.println("could not instantiate StepVectorGenerator from file");
 		}
