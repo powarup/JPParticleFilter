@@ -268,6 +268,16 @@ public class PFController {
 		scan = new Scanner(System.in);
 		
 		while (scan.nextLine() != null) {
+			if (scan.nextLine().equals("end")) {
+				try {
+					PFGifGeneratingView gifGeneratingView = (PFGifGeneratingView)visualiser.view;
+					gifGeneratingView.endGif();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			}
 			nextStep = stepGen.next();
 			propagate(nextStep);
 			System.out.println(recorder.recordings[recorder.currentRecordingIndex-1].summary());

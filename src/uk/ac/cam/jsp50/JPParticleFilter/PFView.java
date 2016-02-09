@@ -1,11 +1,14 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 
 public abstract class PFView {
 
-	public static PFView getView() {
-		
+	public static PFView getView() throws FileNotFoundException, IOException {
+		//return new PFGifGeneratingView();
 		return new PFSwingView();
 	}
 

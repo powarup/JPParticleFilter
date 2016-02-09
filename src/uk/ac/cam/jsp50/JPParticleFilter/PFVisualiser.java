@@ -1,5 +1,7 @@
 package uk.ac.cam.jsp50.JPParticleFilter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -13,10 +15,12 @@ public class PFVisualiser {
 	public PFFloorPlan floorPlan;
 	PFView view;
 	PFRecorder recorder;
+	public boolean generatingGif = false; 
 	
-	public PFVisualiser(PFFloorPlan _floorPlan) {
+	public PFVisualiser(PFFloorPlan _floorPlan, boolean generatingGif) throws FileNotFoundException, IOException {
 		this.floorPlan = _floorPlan;
-		this.view = PFView.getView();
+		this.generatingGif = generatingGif;
+		this.view = this.generatingGif ? new PFGifGeneratingView() : new PFSwingView();
 		this.view.setPFCanvasSize(floorPlan.maxX,floorPlan.maxY);
 		recorder = PFController.recorder;
 		drawFP();
@@ -25,6 +29,8 @@ public class PFVisualiser {
 	
 	public void update(boolean showStep) {
 				
+		if (generatingGif) drawFP();
+		
 		ParticleManager particleManager = recorder.getParticles().getParticleManager();
 		view.clearParticles();
 		
