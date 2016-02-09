@@ -217,8 +217,14 @@ public class PFController {
 		System.out.println("init took " + (endTime - startTime) + "ms");
 		
 		if (visualise) {
-			visualiser = new PFVisualiser(floorPlan);
-			visualiser.update(false);
+			try {
+				visualiser = new PFVisualiser(floorPlan, true);
+				visualiser.update(false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				visualise = false;
+			}
 		}
 	}
 	
