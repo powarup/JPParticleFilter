@@ -12,11 +12,6 @@ public class PFComplexBitmapFloorPlan extends PFBitmapFloorPlan {
 	}
 
 	public PFComplexBitmapFloorPlan(InputStream csvStream) {
-		this(csvStream, null);
-	}
-
-	public PFComplexBitmapFloorPlan(InputStream csvStream, EdgeType edgeType) {
-		this.edgeType = (edgeType == null) ? EdgeType.LINE2D : edgeType;
 		getEdgesFromStream(csvStream);
 		int bitmapWidth = (int)(maxX / cellSize) + 1;
 		int bitmapHeight = (int)(maxY / cellSize) + 1;

@@ -7,12 +7,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public abstract class PFFloorPlan {
-	public enum EdgeType {
-		LINE2D,JP
-	}
 	public double maxX, maxY;
 	public ArrayList<Edge> edges;
-	public EdgeType edgeType = EdgeType.LINE2D;
 	public boolean closed;
 
 	public abstract boolean doesCrossBoundary(double x1, double y1, double x2, double y2); // TODO return crossing type enum, include crosses doorway
@@ -38,17 +34,9 @@ public abstract class PFFloorPlan {
 				double x2 = Double.parseDouble(coordinates[2]);
 				double y2 = Double.parseDouble(coordinates[3]);
 				//System.out.println("storing edge (" + x1 + "," + y1 + ") -> (" + x2 + "," + y2 + ")");
-				switch (edgeType) {
-				case LINE2D:
-					newEdge = new PFLine2DEdge(x1, y1, x2, y2);
-					break;
-				case JP:
-					newEdge = new PFMyEdge(x1, y1, x2, y2);
-					break;
-				default:
-					newEdge = new PFLine2DEdge(x1, y1, x2, y2);
-					break;
-				}
+				
+				newEdge = new Edge(x1, y1, x2, y2);
+				
 				edges.add(newEdge);
 				if (x1 > maxX) maxX = x1;
 				if (x2 > maxX) maxX = x2;

@@ -10,14 +10,8 @@ public class PFSimpleBitmapFloorPlan extends PFBitmapFloorPlan {
 	public final static int INSIDE = 0;
 	public final static int EDGE = 1;
 
-
-	public PFSimpleBitmapFloorPlan(InputStream csvStream, double cellSize) {
-		this(csvStream, cellSize, null);
-	}
-
-	public PFSimpleBitmapFloorPlan(InputStream csvStream, Double cellSize, EdgeType edgeType) {
+	public PFSimpleBitmapFloorPlan(InputStream csvStream, Double cellSize) {
 		this.cellSize = cellSize;
-		this.edgeType = (edgeType == null) ? EdgeType.LINE2D : edgeType;
 		getEdgesFromStream(csvStream);
 		int bitmapWidth = (int)(maxX / cellSize) + 1;
 		int bitmapHeight = (int)(maxY / cellSize) + 1;

@@ -3,13 +3,8 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.io.InputStream;
 
 public class PFNaiveFloorPlan extends PFFloorPlan {
-		
-	public PFNaiveFloorPlan(InputStream csvStream) {
-		this(csvStream, null);
-	}
 	
-	public PFNaiveFloorPlan(InputStream csvStream, EdgeType edgeType) {
-		this.edgeType = (edgeType == null) ? EdgeType.JP : edgeType;
+	public PFNaiveFloorPlan(InputStream csvStream) {
 		getEdgesFromStream(csvStream);
 	}
 
