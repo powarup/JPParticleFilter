@@ -50,54 +50,77 @@ public class FloorPlanComparison extends PFComparison {
 		String stepVectorFilePath = null;
 
 		// one point
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/onePoint.csv";
-
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "one point");
-
 		
-		// ten points
 		randomFilePath = "comparisonData/floorplanrandoms1.txt";
-		floorPlanPath = "comparisonData/tenPoints.csv";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "one point 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "ten points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "one point 2");
+
+		// ten points
+		floorPlanPath = "comparisonData/tenPoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "ten points 1");
+
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "ten points 2");
 
 		// fifty points
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/fiftyPoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "fifty points 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "fifty points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "fifty points 2");
 
 		// hundred points
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/hundredpoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "hundred points 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "hundred points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "hundred points 2");
 
 		// five hundred points
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/fivehundredpoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "five hundred points 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "five hundred points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "five hundred points 2");
 
 		// thousand points
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/thousandpoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "thousand points 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "thousand points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "thousand points 2");
 
 		// five thousand points
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/fivethousandpoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "five thousand points 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "five thousand points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "five thousand points 2");
 
 
 		// ten thousand points
-		randomFilePath = "comparisonData/floorplanrandoms1.txt";
 		floorPlanPath = "comparisonData/tenthousandpoints.csv";
+		
+		randomFilePath = "comparisonData/floorplanrandoms1.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "ten thousand points 1");
 
-		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "ten thousand points");
+		randomFilePath = "comparisonData/floorplanrandoms2.txt";
+		runAndGenerateData(randomFilePath, floorPlanPath, stepVectorFilePath, initialParticleNo, maxParticleNo, degeneracyLimit, "ten thousand points 2");
 
 
 		// polygon1 100 particles
