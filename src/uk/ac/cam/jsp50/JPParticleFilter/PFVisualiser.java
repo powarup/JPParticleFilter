@@ -63,7 +63,10 @@ public class PFVisualiser {
 		
 	}
 	
-	private void drawFP() {
+	public void drawFP() {
+		for (Edge e : floorPlan.doors) {
+			view.drawFPDoor(e);
+		}
 		for (Edge e : floorPlan.edges) {
 			view.drawFPEdge(e);
 		}
