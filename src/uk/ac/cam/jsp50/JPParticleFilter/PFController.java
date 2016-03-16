@@ -14,6 +14,8 @@ import uk.ac.cam.jsp50.JPParticleFilter.StepVectorGenerator.StepVectorGeneratorI
 
 public class PFController {
 	
+	public static final double doorModifier = 0.5;
+	
 	public static PFFloorPlan floorPlan;
 	public static ParticleStore particleStore, inactiveStore;
 	public static int maxParticleNo;
@@ -82,13 +84,23 @@ public class PFController {
 			currenty = particleManager.getY();
 			
 			
-			boolean crossesBoundary = floorPlan.doesCrossBoundary(lastx,lasty,currentx,currenty);
-			if (crossesBoundary) {
+			PFCrossing crossesBoundary = floorPlan.findCrossing(lastx,lasty,currentx,currenty);
+			switch (crossesBoundary) {
+			case NONE:
+				recorder.addStep(lastx, lasty, currentx, currenty, false);
+				break;
+			case CROSSING:
 				particleManager.setWeight(0.0);
 				activeParticles--;
 				recorder.addStep(lastx, lasty, currentx, currenty, true);
-			} else {
+				break;
+			case DOOR:
+				double newWeight = particleManager.getWeight() * doorModifier;
+				particleManager.setWeight(newWeight);
 				recorder.addStep(lastx, lasty, currentx, currenty, false);
+				break;
+			default:
+				break;
 			}
 		} catch (ParticleNotFoundException e) {
 			System.out.print(e.getMessage());
@@ -195,6 +207,10 @@ public class PFController {
 			floorPlan = new PFBitmapFloorPlan(floorPlanStream,0.05);
 			break;
 			
+		case COMPLEX_BITMAP:
+			floorPlan = new PFComplexBitmapFloorPlan(floorPlanStream,0.05);
+			break;
+			
 		default:
 			floorPlan = new PFNaiveFloorPlan(floorPlanStream);
 			break;
@@ -268,7 +284,7 @@ public class PFController {
 		
 		InputStream floorPlanStream = new FileInputStream(floorPlanPath);
 		
-		setupFilter(floorPlanStream, storeType, FloorPlanType.SIMPLE_BITMAP, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
+		setupFilter(floorPlanStream, storeType, FloorPlanType.COMPLEX_BITMAP, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
 		
 		StepVector nextStep;
 		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();

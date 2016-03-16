@@ -27,7 +27,8 @@ public class PFSwingView extends PFView {
 	private class PFCanvasPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 		public Collection<Line2D> particles;
-		public Collection<Line2D> FP;
+		public Collection<Line2D> fpEdges;
+		public Collection<Line2D> fpDoors;
 		public Collection<Line2D> steps;
 		public Collection<Line2D> violations;
 		public Line2D position;
@@ -46,12 +47,19 @@ public class PFSwingView extends PFView {
 		}
 		
 		public Dimension getPreferredSize() {
-	        return new Dimension(250,200);
+	        return new Dimension(500,500);
 	    }
 		
-		private void drawFP(Graphics2D g) {
+		private void drawFPEdges(Graphics2D g) {
 			g.setColor(Color.blue);
-			for (Line2D l : FP) {
+			for (Line2D l : fpEdges) {
+				g.draw(l);
+			}
+		}
+		
+		private void drawFPDoors(Graphics2D g) {
+			g.setColor(Color.green);
+			for (Line2D l : fpDoors) {
 				g.draw(l);
 			}
 		}
@@ -92,8 +100,9 @@ public class PFSwingView extends PFView {
 	    public void paintComponent(Graphics g) {
 	        super.paintComponent(g);       
 	        Graphics2D g2d = (Graphics2D) g;
-	        
-	        drawFP(g2d);
+
+	        drawFPDoors(g2d);
+	        drawFPEdges(g2d);
 	        drawSteps(g2d);
 	        drawParticles(g2d);
 	        drawPosition(g2d);
@@ -112,7 +121,8 @@ public class PFSwingView extends PFView {
 	
 	public PFSwingView() {
 		canvas = new PFCanvasPanel();
-		canvas.FP = new HashSet<Line2D>();
+		canvas.fpEdges = new HashSet<Line2D>();
+		canvas.fpDoors = new HashSet<Line2D>();
 		clearParticles();
 		
 		frame = new JFrame("Particle filter");
@@ -151,9 +161,15 @@ public class PFSwingView extends PFView {
 	@Override
 	public void drawFPEdge(Edge e) {
 		Line2D edgeLine = new Line2D.Double(e.x1 * scale, e.y1 * scale, e.x2 * scale, e.y2 * scale);
-		canvas.FP.add(edgeLine);
+		canvas.fpEdges.add(edgeLine);
 	}
 
+	@Override
+	public void drawFPDoor(Edge e) {
+		Line2D edgeLine = new Line2D.Double(e.x1 * scale, e.y1 * scale, e.x2 * scale, e.y2 * scale);
+		canvas.fpDoors.add(edgeLine);
+	}
+	
 	@Override
 	public void clearParticles() {
 		canvas.next_steps = new HashSet<Line2D>();

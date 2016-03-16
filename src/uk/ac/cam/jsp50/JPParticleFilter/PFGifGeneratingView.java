@@ -88,6 +88,15 @@ public class PFGifGeneratingView extends PFView {
 	}
 
 	@Override
+	public void drawFPDoor(Edge e) {
+		Graphics2D g2d = currentFrame.createGraphics();
+		Line2D stepLine = new Line2D.Double();
+		stepLine.setLine(e.x1*scale, e.y1*scale, e.x2*scale, e.y2*scale);
+		g2d.setColor(Color.green);
+		g2d.draw(stepLine);
+	}
+
+	@Override
 	public void clearParticles() {
 		// TODO Auto-generated method stub
 		

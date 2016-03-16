@@ -20,75 +20,77 @@ public class PFBitmapFloorPlan extends PFFloorPlan{
 		buildBitmap();
 	}
 
-	public boolean doesCrossBoundary(double x1, double y1, double x2, double y2) {
+	public PFCrossing findCrossing(double x1, double y1, double x2, double y2) {
 		LineStepper lineStepper = new LineStepper(cellSize, x1, y1, x2, y2);
-		if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return true;
+		if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return PFCrossing.CROSSING;
 		while (lineStepper.canStepForward()) {
 			lineStepper.stepForward();
-			if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return true;
+			if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return PFCrossing.CROSSING;
 		}
-		return false;
+		return PFCrossing.NONE;
 	}
 
-	@Override
 	public boolean pointIsInsidePlan(double x, double y) {
 		return (getBitmapCell(x, y) == INSIDE);
 	}
 
 	public void buildBitmap() {
-		// fill with outside if closed, inside if open
-		int fillValue = closed ? OUTSIDE : INSIDE;
+		// fill with outside if closed, leave as default (inside) if open
 		int bitmapWidth = bitmap.length;
 		int bitmapHeight = bitmap[0].length;
 
-		for (int x = 0; x < bitmapWidth; x++) {
+		if (closed) for (int x = 0; x < bitmapWidth; x++) {
 			for (int y = 0; y < bitmapHeight; y++) {
-				bitmap[x][y] = fillValue;
+				bitmap[x][y] = OUTSIDE;
 			}
 		}
 
 		// find edges
-
 		Iterator<Edge> iterator = edges.iterator();
 		Edge e;
 		while (iterator.hasNext()) {
 			e = iterator.next();
-			drawLineInBitmap(e.x1, e.y1, e.x2, e.y2);
+			drawLineInBitmap(e.x1, e.y1, e.x2, e.y2,EDGE);
 		}
 		
 		// find insides
-		if (closed) {
-			for (int x = 0; x < bitmapWidth; x++) {
-				for (int y = 0; y < bitmapHeight; y++) {
-					if (bitmap[x][y] != EDGE) {
-						int up = getBitmapCell(x, y-1);
-						int left = getBitmapCell(x-1, y);
-						if (up != EDGE) setBitmapCell(x, y, up);
-						else if (left != EDGE) setBitmapCell(x, y, left);
-						else { // if can't infer from neighbourhood, ray trace
-							int nXCrossings = 0;
-							int nYCrossings = 0;
-							for (int i = 0; i < x; i++) {
-								if (getBitmapCell(i, y) == EDGE && getBitmapCell(i-1, y) != EDGE) nXCrossings++;
-							}
-							for (int i = 0; i < y; i++) {
-								if (getBitmapCell(x, i) == EDGE && getBitmapCell(x, i-1) != EDGE) nYCrossings++;
-							}
-							if (nXCrossings % 2 == 1 && nYCrossings % 2 == 1) setBitmapCell(x, y, INSIDE);
+		if (closed) fillInsides();
+		System.out.println(bitmapDescription());
+	}
+	
+	public void fillInsides() {
+		int bitmapWidth = bitmap.length;
+		int bitmapHeight = bitmap[0].length;
+		for (int x = 0; x < bitmapWidth; x++) {
+			for (int y = 0; y < bitmapHeight; y++) {
+				if (bitmap[x][y] != EDGE) {
+					int up = getBitmapCell(x, y-1);
+					int left = getBitmapCell(x-1, y);
+					if (up != EDGE) setBitmapCell(x, y, up);
+					else if (left != EDGE) setBitmapCell(x, y, left);
+					else { // if can't infer from neighbourhood, ray trace
+						int nXCrossings = 0;
+						int nYCrossings = 0;
+						for (int i = 0; i < x; i++) {
+							if (getBitmapCell(i, y) == EDGE && getBitmapCell(i-1, y) != EDGE) nXCrossings++;
 						}
+						for (int i = 0; i < y; i++) {
+							if (getBitmapCell(x, i) == EDGE && getBitmapCell(x, i-1) != EDGE) nYCrossings++;
+						}
+						if (nXCrossings % 2 == 1 && nYCrossings % 2 == 1) setBitmapCell(x, y, INSIDE);
 					}
 				}
 			}
 		}
-		System.out.println(bitmapDescription());
 	}
 
-	public void drawLineInBitmap(double x1, double y1, double x2, double y2) {
+	public void drawLineInBitmap(double x1, double y1, double x2, double y2, int value) {
 		LineStepper lineStepper = new LineStepper(cellSize, x1, y1, x2, y2);
-		setBitmapCell(lineStepper.currentX,lineStepper.currentY,EDGE);
+		// only draw over cell if it isn't already an edge
+		if (getBitmapCell(lineStepper.currentX,lineStepper.currentY) != EDGE) setBitmapCell(lineStepper.currentX,lineStepper.currentY,value);
 		while (lineStepper.canStepForward()) {
 			lineStepper.stepForward();
-			setBitmapCell(lineStepper.currentX,lineStepper.currentY,EDGE);
+			if (getBitmapCell(lineStepper.currentX,lineStepper.currentY) != EDGE) setBitmapCell(lineStepper.currentX,lineStepper.currentY,value);
 		}
 	}
 

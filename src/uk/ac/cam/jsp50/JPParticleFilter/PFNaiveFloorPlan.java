@@ -18,9 +18,9 @@ public class PFNaiveFloorPlan extends PFFloorPlan {
 		return noCrossings;
 	}
 	
-	public boolean doesCrossBoundary(double x1, double y1, double x2, double y2) {
+	public PFCrossing findCrossing(double x1, double y1, double x2, double y2) {
 		int noCrossings = findEdgeCrossings(x1,y1,x2,y2);
-		return (noCrossings > 0);
+		return (noCrossings > 0) ? PFCrossing.CROSSING : PFCrossing.NONE;
 	}
 
 	public boolean pointIsInsidePlan(double x, double y) { // essentially ray casting algorithm, horizontal ray fixed at y then fixed at x

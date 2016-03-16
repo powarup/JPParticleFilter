@@ -24,6 +24,8 @@ public abstract class PFView {
 	
 	public abstract void drawFPEdge(Edge e);
 
+	public abstract void drawFPDoor(Edge e);
+
 	public abstract void clearParticles();
 	
 	public abstract void redraw();
