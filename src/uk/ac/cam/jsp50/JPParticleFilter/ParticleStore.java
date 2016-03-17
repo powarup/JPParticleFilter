@@ -16,7 +16,7 @@ public abstract class ParticleStore {
 	}
 	
 	public abstract class ParticleManager { // ParticleManager iterates over set of particles and provides proxy operations
-		private int n = -1;
+		protected int n = -1;
 		
 		public int currentIndex() {
 			return n;

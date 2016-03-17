@@ -6,13 +6,12 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.swing.*;
-
-import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 
 public class PFSwingView extends PFView {
 	
@@ -31,11 +30,13 @@ public class PFSwingView extends PFView {
 		public Collection<Line2D> fpDoors;
 		public Collection<Line2D> steps;
 		public Collection<Line2D> violations;
+		public ArrayList<Collection<Line2D>> oldSteps;
 		public Line2D position;
 		
 		public Collection<Line2D> next_particles;
 		public Collection<Line2D> next_steps;
 		public Collection<Line2D> next_violations;
+		public ArrayList<Collection<Line2D>> next_oldSteps;
 		public Line2D next_position;
 
 		public PFCanvasPanel() {
@@ -46,6 +47,9 @@ public class PFSwingView extends PFView {
 			this.steps = new HashSet<Line2D>();
 			this.particles = new HashSet<Line2D>();
 			this.violations = new HashSet<Line2D>();
+			this.oldSteps = new ArrayList<Collection<Line2D>>();
+			this.oldSteps.add(new HashSet<Line2D>());
+			this.oldSteps.add(new HashSet<Line2D>());
 		}
 		
 		public Dimension getPreferredSize() {
@@ -88,6 +92,17 @@ public class PFSwingView extends PFView {
 			for (Line2D l : violations) {
 				g.draw(l);
 			}
+			
+			if (oldSteps != null && oldSteps.size() > 1) for (int age = 1; age < oldSteps.size(); age++) {
+				g.setColor(getColorForAge(age));
+				for (Line2D l : oldSteps.get(age)) {
+					g.draw(l);
+				}
+			}
+		}
+		
+		private Color getColorForAge(int age) {
+			return Color.yellow;
 		}
 		
 		private void drawPosition(Graphics2D g) {
@@ -115,6 +130,8 @@ public class PFSwingView extends PFView {
 	    	next_particles = new HashSet<Line2D>();
 	    	this.steps = this.next_steps;
 	    	next_steps = new HashSet<Line2D>();
+	    	this.oldSteps = this.next_oldSteps;
+	    	next_oldSteps = new ArrayList<Collection<Line2D>>();
 	    	this.violations = this.next_violations;
 	    	next_violations = new HashSet<Line2D>();
 	    	this.position = next_position;
@@ -192,6 +209,21 @@ public class PFSwingView extends PFView {
 	@Override
 	public void drawPosition(double x, double y, double stdev) {
 		canvas.next_position = new Line2D.Double(x * scale, y * scale, x * scale, y * scale);
+	}
+
+	@Override
+	public void drawPastStep(uk.ac.cam.jsp50.JPParticleFilter.Step s) {
+		Line2D stepLine = new Line2D.Double(s.x1 * scale, s.y1 * scale, s.x2 * scale, s.y2 * scale);
+		Collection<Line2D> ageSteps;
+		try {
+			ageSteps = canvas.next_oldSteps.get(s.age);
+		} catch (IndexOutOfBoundsException e) {
+			for (int i = canvas.next_oldSteps.size(); i <= s.age; i++) {
+				canvas.next_oldSteps.add(new HashSet<Line2D>());
+			}
+			ageSteps = canvas.next_oldSteps.get(s.age);
+		}
+		ageSteps.add(stepLine);
 	}
 
 	

@@ -10,7 +10,7 @@ public class PFRecorder {
 	private enum PFRecordingType {
 		PROPAGATE,RESAMPLE;
 	}
-
+	
 	public class PFRecording {
 		public PFRecordingType type;
 		public Position position;
@@ -44,18 +44,6 @@ public class PFRecorder {
 		}
 	}
 
-	public class Step {
-		double x1, y1, x2, y2;
-		boolean violation;
-		public Step(double x1, double y1, double x2, double y2, boolean violation) {
-			this.x1 = x1;
-			this.x2 = x2;
-			this.y1 = y1;
-			this.y2 = y2;
-			this.violation = violation;
-		}
-	}
-
 	public class Position {
 		double x,y,stdev;
 
@@ -66,7 +54,7 @@ public class PFRecorder {
 		}
 	}
 
-	public final boolean collectingMemoryStatistics, collectingTimeStatistics, collectingSteps, collectingPosition;
+	public final boolean collectingMemoryStatistics, collectingTimeStatistics, collectingSteps, collectingPosition, backtracking;
 	public final int maxRecordingNo;
 
 	private int currentGeneration = 1;
@@ -79,12 +67,13 @@ public class PFRecorder {
 	public boolean recordingPropagate = false, recordingResample = false;
 	public int currentRecordingIndex = 0; // points to current recording, or if no recording is in progress, next available
 
-	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, int maxRecordingNo, ParticleStoreType storeType, String randomFilePath, String stepVectorFilePath) {
+	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, boolean backtracking, int maxRecordingNo, String randomFilePath, String stepVectorFilePath) {
 		this.collectingMemoryStatistics = collectingMemoryStatistics;
 		this.collectingTimeStatistics = collectingTimeStatistics;
 		this.collectingSteps = collectingSteps;
 		this.collectingPosition = collectingPosition;
 		this.maxRecordingNo = maxRecordingNo;
+		this.backtracking = backtracking;
 
 		if (collectingMemoryStatistics || collectingTimeStatistics) { // initialise recording array so recording occurs in place
 			recordings = new PFRecording[maxRecordingNo];
@@ -139,21 +128,25 @@ public class PFRecorder {
 
 		return new Position(x, y, stdev);
 	}
-
+	
 	public int getActiveParticleNo() {
-		return PFController.activeParticles;
+		if (backtracking) return PFNaiveBacktrackingController.activeParticles;
+		else return PFController.activeParticles;
 	}
 
 	public int getMaxParticleNo() {
-		return PFController.maxParticleNo;
+		if (backtracking) return PFNaiveBacktrackingController.maxParticleNo;
+		else return PFController.maxParticleNo;
 	}
 
 	public int getDegeneracyLimit() {
-		return PFController.degeneracyLimit;
+		if (backtracking) return PFNaiveBacktrackingController.degeneracyLimit;
+		else return PFController.degeneracyLimit;
 	}
 
 	public ParticleStore getParticles() {
-		return PFController.particleStore;
+		if (backtracking) return PFNaiveBacktrackingController.particleStore;
+		else return PFController.particleStore;
 	}
 
 	// Statistics recording methods

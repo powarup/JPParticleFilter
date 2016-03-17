@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import uk.ac.cam.jsp50.JPParticleFilter.NaiveBacktrackingParticleStore.NaiveBacktrackingParticle;
+import uk.ac.cam.jsp50.JPParticleFilter.NaiveBacktrackingParticleStore.NaiveBacktrackingParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Position;
-import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 
@@ -52,6 +53,19 @@ public class PFVisualiser {
 		while (particleManager.hasNextActiveParticle()) try {
 			particleManager.nextActiveParticle();
 			view.drawParticle(particleManager.getX(), particleManager.getY());
+			
+			if (recorder.backtracking) {
+				NaiveBacktrackingParticleManager backtrackingParticleManager = (NaiveBacktrackingParticleManager)particleManager;
+				NaiveBacktrackingParticle oldPoint = backtrackingParticleManager.getParticle().parent;
+				int age = 1;
+				while (oldPoint != null && oldPoint.parent != null) {
+					Step oldStep = new Step(oldPoint.x, oldPoint.y, oldPoint.parent.x, oldPoint.parent.y, false, age);
+					view.drawPastStep(oldStep);
+					age++;
+					oldPoint = oldPoint.parent;
+				}
+			}
+			
 		} catch (ParticleNotFoundException e) {
 			System.err.println(e.getMessage());
 		}

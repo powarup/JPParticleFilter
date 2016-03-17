@@ -7,44 +7,26 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import uk.ac.cam.jsp50.JPParticleFilter.NaiveBacktrackingParticleStore.NaiveBacktrackingParticle;
+import uk.ac.cam.jsp50.JPParticleFilter.NaiveBacktrackingParticleStore.NaiveBacktrackingParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRandom.PFRandomInstanceAlreadyExistsException;
-import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 import uk.ac.cam.jsp50.JPParticleFilter.StepVectorGenerator.StepVectorGeneratorInstanceAlreadyExistsException;
 
-public class PFController {
+public class PFNaiveBacktrackingController extends PFController {
+	public static NaiveBacktrackingParticleStore particleStore;
+	private static final boolean stepPruning = true;
 	
-	public static final double doorModifier = 0.5;
+	// ========== INITIALISATION ======================================================
 	
-	public static PFFloorPlan floorPlan;
-	public static ParticleStore particleStore, inactiveStore;
-	public static int maxParticleNo;
-	public static int degeneracyLimit;
-	public static int activeParticles = 0;
-	public static ParticleStoreType currentStoreType;
-	
-	public static PFVisualiser visualiser;
-	public static PFRecorder recorder;
-	protected static Scanner scan;
-	
-	public static void init(ParticleStoreType type) {
-		initWithParticleNo(type,maxParticleNo);
+	public static void init() {
+		initWithParticleNo(maxParticleNo);
 	}
 	
-	public static void initWithParticleNo(ParticleStoreType type, int particleNo) {
+	public static void initWithParticleNo(int particleNo) {
 		System.out.println("initialising");
-		currentStoreType = type;
-		switch (type) {
-		case OBJECT:
-			particleStore = new ObjectParticleStore();
-			break;
-		case ARRAY:
-			particleStore = new ArrayParticleStore(particleNo);
-			break;
-		default:
-			particleStore = new ArrayParticleStore(particleNo);
-			break;
-		}
+		particleStore = new NaiveBacktrackingParticleStore();
+		
 		double x,y;
 		PFRandom randomGenerator = PFRandom.getInstance();
 		
@@ -62,8 +44,10 @@ public class PFController {
 	}
 	
 	public static void reinit() {
-		init(currentStoreType);
+		init();
 	}
+	
+	// ========== PROPAGATION ========================================================
 	
 	public static void propagate(StepVector s) {
 		//System.out.println("Propagating " + activeParticles + " particles from step vector " + s.length + "," + s.angle);
@@ -71,37 +55,44 @@ public class PFController {
 		
 		PFRandom randomGenerator = PFRandom.getInstance();
 		
-		ParticleManager particleManager = particleStore.getParticleManager();
+		NaiveBacktrackingParticleManager particleManager = (NaiveBacktrackingParticleManager)particleStore.getParticleManager();
+		particleStore.nextGeneration();
 		
 		double lastx, lasty, currentx, currenty;
 		
 		while (particleManager.hasNextActiveParticle()) try {
-			particleManager.nextActiveParticle();
-			lastx = particleManager.getX();
-			lasty = particleManager.getY();
-			particleManager.displace(s.addNoise(randomGenerator));
-			currentx = particleManager.getX();
-			currenty = particleManager.getY();
 			
+			particleManager.nextActiveParticle();
+			NaiveBacktrackingParticle newParticle = particleManager.getParticle().getChild();
+			lastx = newParticle.x;
+			lasty = newParticle.y;
+			newParticle.displace(s.addNoise(randomGenerator));
+			currentx = newParticle.x;
+			currenty = newParticle.y;
 			
 			PFCrossing crossesBoundary = floorPlan.findCrossing(lastx,lasty,currentx,currenty);
+			
 			switch (crossesBoundary) {
 			case NONE:
 				recorder.addStep(lastx, lasty, currentx, currenty, false);
+				particleStore.addParticle(newParticle);
 				break;
 			case CROSSING:
-				particleManager.setWeight(0.0);
+				newParticle.w = 0;
 				activeParticles--;
 				recorder.addStep(lastx, lasty, currentx, currenty, true);
+				if (!stepPruning) particleStore.addParticle(newParticle);
 				break;
 			case DOOR:
 				double newWeight = particleManager.getWeight() * doorModifier;
-				particleManager.setWeight(newWeight);
+				newParticle.w = newWeight;
 				recorder.addStep(lastx, lasty, currentx, currenty, false);
+				particleStore.addParticle(newParticle);
 				break;
 			default:
 				break;
 			}
+			
 		} catch (ParticleNotFoundException e) {
 			System.out.print(e.getMessage());
 		}
@@ -110,6 +101,8 @@ public class PFController {
 		
 		if (activeParticles <=0) reinit();
 	}
+	
+	// ========== RESAMPLING =========================================================
 	
 	public static void resample() throws ParticleNotFoundException {
 		/* Multinomial resampling
@@ -120,7 +113,7 @@ public class PFController {
 		 */
 		recorder.startRecordingResample();
 		
-		ParticleManager particleManager = particleStore.getParticleManager();
+		NaiveBacktrackingParticleManager particleManager = (NaiveBacktrackingParticleManager)particleStore.getParticleManager();
 		double totalWeight = particleStore.getTotalWeight();
 		
 		double[] randomN = new double[maxParticleNo];
@@ -130,11 +123,10 @@ public class PFController {
 		}
 		
 		Arrays.sort(randomN);
-		
-		ParticleStore newParticles = (inactiveStore == null) ? particleStore.getFreshParticleStoreInstance() : inactiveStore;
-		
-		particleManager = particleStore.getParticleManager();
+				
+		particleManager = (NaiveBacktrackingParticleManager)particleStore.getParticleManager();
 		particleManager.nextActiveParticle();
+		particleStore.nextGeneration();
 		double weightTotal = particleManager.getWeight();
 		
 		// iterate over random numbers
@@ -160,19 +152,18 @@ public class PFController {
 			}
 			
 			//System.out.println("sampling from particle #" + particleManager.currentIndex() + " " + particleManager.summary() + " using random number " + randomN[j] + " scaled to " + scaledRandom);
-			double x = particleManager.getX();
-			double y = particleManager.getY();
-			newParticles.addParticle(x,y,newWeight);
+			NaiveBacktrackingParticle newParticle = particleManager.getParticle().getChild();
+			newParticle.w = newWeight;
+			particleStore.addParticle(newParticle);
 		}
 		
-		inactiveStore = particleStore;
-		inactiveStore.cleanForReuse();
-		particleStore = newParticles;
 		activeParticles = particleStore.getParticleNo();
 		
 		recorder.endRecordingResample();
 		
 	}
+	
+	// ========== RUNNING ===========================================================
 	
 	public static void resetFilter() {
 		floorPlan = null;
@@ -187,12 +178,12 @@ public class PFController {
 		PFRandom.clearInstance();
 		StepVectorGenerator.clearInstance();
 	}
-	
-	public static void setupFilter(InputStream floorPlanStream, ParticleStoreType storeType, FloorPlanType fpType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise, boolean recorderShouldCollectMemoryStats, boolean recorderShouldCollectTimeStats, boolean recorderShouldCollectSteps, boolean recorderShouldTrackPosition) {
+
+	public static void setupFilter(InputStream floorPlanStream, FloorPlanType fpType, int initialParticleNo, int maxParticleNo, int degeneracyLimit, String randomFilePath, String stepVectorFilePath, boolean visualise, boolean recorderShouldCollectMemoryStats, boolean recorderShouldCollectTimeStats, boolean recorderShouldCollectSteps, boolean recorderShouldTrackPosition) {
 		resetFilter();
 		long startTime;
 		long endTime;
-		boolean backtracking = false;
+		boolean backtracking = true;
 		
 		recorder = new PFRecorder(recorderShouldCollectMemoryStats, recorderShouldCollectTimeStats, recorderShouldCollectSteps, recorderShouldTrackPosition, backtracking, 1000, randomFilePath, stepVectorFilePath);
 		
@@ -230,7 +221,7 @@ public class PFController {
 		}
 		
 		startTime = System.currentTimeMillis();
-		initWithParticleNo(storeType,initialParticleNo);
+		initWithParticleNo(initialParticleNo);
 		endTime = System.currentTimeMillis();
 		System.out.println("init took " + (endTime - startTime) + "ms");
 		
@@ -239,45 +230,35 @@ public class PFController {
 				visualiser = new PFVisualiser(floorPlan, false);
 				visualiser.update(false);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				visualise = false;
 			}
 		}
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
+public static void main(String[] args) throws FileNotFoundException {
 		
 		// args are: floor plan path; object/array for store type; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
 		
 		// get setup options
 		
 		String floorPlanPath = args[0];
-		String storeTypeOption = args[1];
-		int initialParticleNo = Integer.parseInt(args[2]);
-		int _maxParticleNo = Integer.parseInt(args[3]);
-		int _degeneracyLimit = Integer.parseInt(args[4]);
-		int seedingOption = Integer.parseInt(args[5]);
+		int initialParticleNo = Integer.parseInt(args[1]);
+		int _maxParticleNo = Integer.parseInt(args[2]);
+		int _degeneracyLimit = Integer.parseInt(args[3]);
+		int seedingOption = Integer.parseInt(args[4]);
 		String randomFilePath = null, stepVectorFilePath = null;
-		
-		ParticleStoreType storeType = ParticleStoreType.OBJECT;
-		if (storeTypeOption.equals("object")) {
-			storeType = ParticleStoreType.OBJECT;
-		}
-		if (storeTypeOption.equals("array")) {
-			storeType = ParticleStoreType.ARRAY;
-		}
 		
 		switch (seedingOption) {
 		case 1:
-			randomFilePath = args[6];
+			randomFilePath = args[5];
 			break;
 		case 2:
-			stepVectorFilePath = args[6];
+			stepVectorFilePath = args[5];
 			break;
 		case 3:
-			randomFilePath = args[6];
-			stepVectorFilePath = args[7];
+			randomFilePath = args[5];
+			stepVectorFilePath = args[6];
 			break;
 		default:
 			break;
@@ -285,7 +266,7 @@ public class PFController {
 		
 		InputStream floorPlanStream = new FileInputStream(floorPlanPath);
 		
-		setupFilter(floorPlanStream, storeType, FloorPlanType.COMPLEX_BITMAP, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
+		setupFilter(floorPlanStream, FloorPlanType.COMPLEX_BITMAP, initialParticleNo, _maxParticleNo, _degeneracyLimit, randomFilePath, stepVectorFilePath, true, true, true, true, true);
 		
 		StepVector nextStep;
 		StepVectorGenerator stepGen = StepVectorGenerator.getInstance();
@@ -320,4 +301,5 @@ public class PFController {
 		
 	}
 
+	
 }

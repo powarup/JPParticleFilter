@@ -12,8 +12,6 @@ import java.io.IOException;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
-
 public class PFGifGeneratingView extends PFView {
 
 	private BufferedImage currentFrame;
@@ -58,6 +56,19 @@ public class PFGifGeneratingView extends PFView {
 		g2d.draw(stepLine);
 	}
 
+	@Override
+	public void drawPastStep(Step s) {
+		Graphics2D g2d = currentFrame.createGraphics();
+		Line2D stepLine = new Line2D.Double();
+		stepLine.setLine(s.x1*scale, s.y1*scale, s.x2*scale, s.y2*scale);
+		g2d.setColor(getColorForAge(s.age));
+		g2d.draw(stepLine);
+	}
+
+	private Color getColorForAge(int age) {
+		return Color.yellow;
+	}
+	
 	@Override
 	public void drawParticle(double x, double y) {
 		Graphics2D g2d = currentFrame.createGraphics();

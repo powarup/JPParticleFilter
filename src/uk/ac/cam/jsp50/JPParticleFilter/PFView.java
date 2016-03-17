@@ -3,8 +3,6 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Step;
-
 public abstract class PFView {
 
 	public static PFView getView() throws FileNotFoundException, IOException {
@@ -15,6 +13,8 @@ public abstract class PFView {
 	public abstract void setPFCanvasSize(double maxX, double maxY);
 
 	public abstract void drawStep(Step s);
+	
+	public abstract void drawPastStep(Step s);
 	
 	public abstract void drawViolation(Step s);
 
