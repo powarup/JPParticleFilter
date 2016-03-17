@@ -39,6 +39,8 @@ public class PFSwingView extends PFView {
 		public Line2D next_position;
 
 		public PFCanvasPanel() {
+			fpEdges = new HashSet<Line2D>();
+			fpDoors = new HashSet<Line2D>();
 			setBorder(BorderFactory.createLineBorder(Color.black));
 			setBackground(Color.white);
 			this.steps = new HashSet<Line2D>();
@@ -89,7 +91,7 @@ public class PFSwingView extends PFView {
 		}
 		
 		private void drawPosition(Graphics2D g) {
-			synchronized (g) {
+			if (position != null) synchronized (g) {
 				g.setStroke(new BasicStroke(3));
 				g.setColor(Color.red);
 				g.draw(position);
@@ -121,8 +123,6 @@ public class PFSwingView extends PFView {
 	
 	public PFSwingView() {
 		canvas = new PFCanvasPanel();
-		canvas.fpEdges = new HashSet<Line2D>();
-		canvas.fpDoors = new HashSet<Line2D>();
 		clearParticles();
 		
 		frame = new JFrame("Particle filter");
