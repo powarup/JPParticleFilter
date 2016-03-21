@@ -50,7 +50,7 @@ public class ObjectParticleStore extends ParticleStore {
 
 		@Override
 		public void setWeight(double w) {
-			p.w = w;
+			setWeightatIndex(n, w);
 		}
 
 		@Override
@@ -97,7 +97,9 @@ public class ObjectParticleStore extends ParticleStore {
 
 	@Override
 	public double getWeightatIndex(int n) {
-		return particles.get(n).w;
+		Particle particle = particles.get(n);
+		if (particle == null) return 0;
+		return particle.w;
 	}
 
 	@Override
@@ -114,8 +116,12 @@ public class ObjectParticleStore extends ParticleStore {
 
 	@Override
 	public void setWeightatIndex(int n, double _w) {
-		Particle p = particles.get(n);
-		p.w = _w;
+		if (_w == 0) {
+			particles.set(n, null);
+		} else {
+			Particle p = particles.get(n);
+			p.w = _w;
+		}
 	}
 
 	@Override
