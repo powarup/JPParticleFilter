@@ -22,6 +22,7 @@ public class PFController {
 	public static int degeneracyLimit;
 	public static int activeParticles = 0;
 	public static ParticleStoreType currentStoreType;
+	public final static PFBacktrackingScheme BACKTRACKING_SCHEME = PFBacktrackingScheme.NONE;
 	
 	public static PFVisualiser visualiser;
 	public static PFRecorder recorder;
@@ -192,9 +193,8 @@ public class PFController {
 		resetFilter();
 		long startTime;
 		long endTime;
-		boolean backtracking = false;
 		
-		recorder = new PFRecorder(recorderShouldCollectMemoryStats, recorderShouldCollectTimeStats, recorderShouldCollectSteps, recorderShouldTrackPosition, backtracking, 1000, randomFilePath, stepVectorFilePath);
+		recorder = new PFRecorder(recorderShouldCollectMemoryStats, recorderShouldCollectTimeStats, recorderShouldCollectSteps, recorderShouldTrackPosition, BACKTRACKING_SCHEME, 1000, randomFilePath, stepVectorFilePath);
 		
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;

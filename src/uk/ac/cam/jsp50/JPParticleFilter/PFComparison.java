@@ -20,10 +20,13 @@ public abstract class PFComparison {
 					e.printStackTrace();
 				}
 		}
-		
-		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath));
+		export(filePath, PFController.recorder);
+	}
+	
+	public static void export(String filePath, PFRecorder recorder) throws IOException {
+		System.out.println("exporting to " + filePath);
+		BufferedWriter writer = new BufferedWriter(new FileWriter(filePath,false));
 
-		PFRecorder recorder = PFController.recorder;
 		for (int j = 0; j < recorder.currentRecordingIndex; j++) {
 			PFRecording recording = recorder.recordings[j];
 			long timeTaken = recording.endTime - recording.startTime;

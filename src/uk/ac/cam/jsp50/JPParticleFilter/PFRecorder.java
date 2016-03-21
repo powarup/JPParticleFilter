@@ -54,7 +54,8 @@ public class PFRecorder {
 		}
 	}
 
-	public final boolean collectingMemoryStatistics, collectingTimeStatistics, collectingSteps, collectingPosition, backtracking;
+	public final boolean collectingMemoryStatistics, collectingTimeStatistics, collectingSteps, collectingPosition;
+	public final PFBacktrackingScheme backtrackingScheme;
 	public final int maxRecordingNo;
 
 	private int currentGeneration = 1;
@@ -67,13 +68,13 @@ public class PFRecorder {
 	public boolean recordingPropagate = false, recordingResample = false;
 	public int currentRecordingIndex = 0; // points to current recording, or if no recording is in progress, next available
 
-	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, boolean backtracking, int maxRecordingNo, String randomFilePath, String stepVectorFilePath) {
+	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, PFBacktrackingScheme backtrackingScheme, int maxRecordingNo, String randomFilePath, String stepVectorFilePath) {
 		this.collectingMemoryStatistics = collectingMemoryStatistics;
 		this.collectingTimeStatistics = collectingTimeStatistics;
 		this.collectingSteps = collectingSteps;
 		this.collectingPosition = collectingPosition;
 		this.maxRecordingNo = maxRecordingNo;
-		this.backtracking = backtracking;
+		this.backtrackingScheme = backtrackingScheme;
 
 		if (collectingMemoryStatistics || collectingTimeStatistics) { // initialise recording array so recording occurs in place
 			recordings = new PFRecording[maxRecordingNo];
@@ -130,23 +131,55 @@ public class PFRecorder {
 	}
 	
 	public int getActiveParticleNo() {
-		if (backtracking) return PFNaiveBacktrackingController.activeParticles;
-		else return PFController.activeParticles;
+		switch (backtrackingScheme) {
+		case NONE:
+			return PFController.activeParticles;
+		case NAIVE:
+			return PFNaiveBacktrackingController.activeParticles;
+		case STRINGY:
+			return PFStringyParticleBacktrackingController.activeParticles;
+		default:
+			return PFController.activeParticles;
+		}
 	}
 
 	public int getMaxParticleNo() {
-		if (backtracking) return PFNaiveBacktrackingController.maxParticleNo;
-		else return PFController.maxParticleNo;
+		switch (backtrackingScheme) {
+		case NONE:
+			return PFController.maxParticleNo;
+		case NAIVE:
+			return PFNaiveBacktrackingController.maxParticleNo;
+		case STRINGY:
+			return PFStringyParticleBacktrackingController.maxParticleNo;
+		default:
+			return PFController.maxParticleNo;
+		}
 	}
 
 	public int getDegeneracyLimit() {
-		if (backtracking) return PFNaiveBacktrackingController.degeneracyLimit;
-		else return PFController.degeneracyLimit;
+		switch (backtrackingScheme) {
+		case NONE:
+			return PFController.degeneracyLimit;
+		case NAIVE:
+			return PFNaiveBacktrackingController.degeneracyLimit;
+		case STRINGY:
+			return PFStringyParticleBacktrackingController.degeneracyLimit;
+		default:
+			return PFController.degeneracyLimit;
+		}
 	}
 
 	public ParticleStore getParticles() {
-		if (backtracking) return PFNaiveBacktrackingController.particleStore;
-		else return PFController.particleStore;
+		switch (backtrackingScheme) {
+		case NONE:
+			return PFController.particleStore;
+		case NAIVE:
+			return PFNaiveBacktrackingController.particleStore;
+		case STRINGY:
+			return PFStringyParticleBacktrackingController.particleStore;
+		default:
+			return PFController.particleStore;
+		}
 	}
 
 	// Statistics recording methods
@@ -222,7 +255,7 @@ public class PFRecorder {
 		// Get the Java runtime
 		Runtime runtime = Runtime.getRuntime();
 		// Run the garbage collector
-		runtime.gc();
+		//runtime.gc();
 		// Calculate the used memory
 		long memory = runtime.totalMemory() - runtime.freeMemory();
 		return memory;

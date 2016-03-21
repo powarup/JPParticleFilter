@@ -83,6 +83,13 @@ public class PFSwingView extends PFView {
 		}
 		
 		private void drawSteps(Graphics2D g) {
+			if (oldSteps != null && oldSteps.size() > 1) for (int age = 1; age < oldSteps.size(); age++) {
+				g.setColor(getColorForAge(age));
+				for (Line2D l : oldSteps.get(age)) {
+					g.draw(l);
+				}
+			}
+			
 			g.setColor(Color.green);
 			for (Line2D l : steps) {
 				g.draw(l);
@@ -91,13 +98,6 @@ public class PFSwingView extends PFView {
 			g.setColor(Color.red);
 			for (Line2D l : violations) {
 				g.draw(l);
-			}
-			
-			if (oldSteps != null && oldSteps.size() > 1) for (int age = 1; age < oldSteps.size(); age++) {
-				g.setColor(getColorForAge(age));
-				for (Line2D l : oldSteps.get(age)) {
-					g.draw(l);
-				}
 			}
 		}
 		
