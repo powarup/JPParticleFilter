@@ -8,15 +8,14 @@ import java.util.Arrays;
 import java.util.Scanner;
 
 import uk.ac.cam.jsp50.JPParticleFilter.BacktrackingParticleStore.BacktrackingParticleManager;
-import uk.ac.cam.jsp50.JPParticleFilter.NaiveBacktrackingParticleStore.NaiveBacktrackingParticle;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRandom.PFRandomInstanceAlreadyExistsException;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 import uk.ac.cam.jsp50.JPParticleFilter.StepVectorGenerator.StepVectorGeneratorInstanceAlreadyExistsException;
+import uk.ac.cam.jsp50.JPParticleFilter.StringyBacktrackingParticleStore.StringyBacktrackingParticle;
 
-public class PFNaiveBacktrackingController extends PFController {
-	public static NaiveBacktrackingParticleStore particleStore;
-	public final static PFBacktrackingScheme BACKTRACKING_SCHEME = PFBacktrackingScheme.NAIVE;
-	private static final boolean stepPruning = true;
+public class PFStringyParticleBacktrackingController extends PFController {
+	public static StringyBacktrackingParticleStore particleStore;
+	public final static PFBacktrackingScheme BACKTRACKING_SCHEME = PFBacktrackingScheme.STRINGY;
 	
 	// ========== INITIALISATION ======================================================
 	
@@ -26,7 +25,7 @@ public class PFNaiveBacktrackingController extends PFController {
 	
 	public static void initWithParticleNo(int particleNo) {
 		System.out.println("initialising");
-		particleStore = new NaiveBacktrackingParticleStore();
+		particleStore = new StringyBacktrackingParticleStore();
 		
 		double x,y;
 		PFRandom randomGenerator = PFRandom.getInstance();
@@ -39,7 +38,7 @@ public class PFNaiveBacktrackingController extends PFController {
 			if (floorPlan.pointIsInsidePlan(x, y)) {
 				particleStore.addParticle(x,y,weight);
 				activeParticles++;
-			} else System.out.println("rejecting particle " + x + "," + y);
+			}
 		}
 		System.out.println("initialised with " + activeParticles + " particles");
 	}
@@ -57,50 +56,46 @@ public class PFNaiveBacktrackingController extends PFController {
 		PFRandom randomGenerator = PFRandom.getInstance();
 		
 		BacktrackingParticleManager particleManager = (BacktrackingParticleManager)particleStore.getParticleManager();
-		particleStore.nextGeneration();
 		
 		double lastx, lasty, currentx, currenty;
+		StringyBacktrackingParticle currentParticle;
 		
 		while (particleManager.hasNextActiveParticle()) try {
 			
 			particleManager.nextActiveParticle();
-			NaiveBacktrackingParticle newParticle = (NaiveBacktrackingParticle) particleManager.getParticle().generateChild();
-			lastx = newParticle.x;
-			lasty = newParticle.y;
-			newParticle.displace(s.addNoise(randomGenerator));
-			currentx = newParticle.x;
-			currenty = newParticle.y;
-
+			currentParticle = (StringyBacktrackingParticle) particleManager.getParticle();
+			lastx = currentParticle.x;
+			lasty = currentParticle.y;
+			currentParticle.displace(s.addNoise(randomGenerator));
+			currentx = currentParticle.x;
+			currenty = currentParticle.y;
+			
 			PFCrossing crossesBoundary = floorPlan.findCrossing(lastx,lasty,currentx,currenty);
-
+			
 			switch (crossesBoundary) {
 			case NONE:
 				recorder.addStep(lastx, lasty, currentx, currenty, false);
-				particleStore.addParticle(newParticle);
 				break;
 			case CROSSING:
-				newParticle.w = 0;
 				activeParticles--;
 				recorder.addStep(lastx, lasty, currentx, currenty, true);
-				if (!stepPruning) particleStore.addParticle(newParticle);
+				currentParticle.reweight(0.0);
 				break;
 			case DOOR:
 				double newWeight = particleManager.getWeight() * doorModifier;
-				newParticle.w = newWeight;
 				recorder.addStep(lastx, lasty, currentx, currenty, false);
-				particleStore.addParticle(newParticle);
+				currentParticle.reweight(newWeight);
 				break;
 			default:
 				break;
 			}
-
-
+			
 		} catch (ParticleNotFoundException e) {
 			System.out.print(e.getMessage());
 		}
 		
 		recorder.endRecordingPropagate();
-
+		
 		if (activeParticles <=0) reinit();
 	}
 	
@@ -154,7 +149,7 @@ public class PFNaiveBacktrackingController extends PFController {
 			}
 			
 			//System.out.println("sampling from particle #" + particleManager.currentIndex() + " " + particleManager.summary() + " using random number " + randomN[j] + " scaled to " + scaledRandom);
-			NaiveBacktrackingParticle newParticle = (NaiveBacktrackingParticle) particleManager.getParticle().generateChild();
+			BacktrackingParticle newParticle = particleManager.getParticle().generateChild();
 			newParticle.w = newWeight;
 			particleStore.addParticle(newParticle);
 		}
@@ -239,7 +234,7 @@ public class PFNaiveBacktrackingController extends PFController {
 	
 public static void main(String[] args) throws FileNotFoundException {
 		
-		// args are: floor plan path; object/array for store type; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
+		// args are: floor plan path; initialParticleNo; maxParticleNo; degeneracyLimit; 0 if running clean, 1 if next argument is randomfile, 2 if next argument is svfile, 3 if next arguments are randomfile svfile
 		
 		// get setup options
 		
@@ -279,7 +274,6 @@ public static void main(String[] args) throws FileNotFoundException {
 					PFGifGeneratingView gifGeneratingView = (PFGifGeneratingView)visualiser.view;
 					gifGeneratingView.endGif();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				break;
