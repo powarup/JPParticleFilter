@@ -34,56 +34,111 @@ public class PFBitmapFloorPlan extends PFFloorPlan{
 		return (getBitmapCell(x, y) == INSIDE);
 	}
 
+
 	public void buildBitmap() {
 		// fill with outside if closed, leave as default (inside) if open
 		int bitmapWidth = bitmap.length;
 		int bitmapHeight = bitmap[0].length;
-
+		System.out.println("Building " + (closed ? "closed " : "open ") + "bitmap floor plan");
 		if (closed) for (int x = 0; x < bitmapWidth; x++) {
 			for (int y = 0; y < bitmapHeight; y++) {
 				bitmap[x][y] = OUTSIDE;
 			}
 		}
 
-		// find edges
+		// draw edges in bitmap
 		Iterator<Edge> iterator = edges.iterator();
 		Edge e;
 		while (iterator.hasNext()) {
 			e = iterator.next();
 			drawLineInBitmap(e.x1, e.y1, e.x2, e.y2,EDGE);
 		}
-		
+		System.out.println("edges drawn");
+
 		// find insides
-		if (closed) fillInsides();
-		System.out.println(bitmapDescription());
+		if (closed) {
+			plantInsideSeeds();
+			for (int y = 0; y < bitmapHeight-1; y++) {
+				for (int x = 0; x < bitmapWidth-1; x++) {
+					if (getBitmapCell(x, y) == INSIDE) {
+						propagateSeed(x, y, 0);
+					}
+				}
+			}
+		}
+
+		System.out.println("filled");
+		//System.out.println(bitmapDescription());
 	}
-	
-	public void fillInsides() {
+
+	private void plantInsideSeeds() {
 		int bitmapWidth = bitmap.length;
 		int bitmapHeight = bitmap[0].length;
-		for (int x = 0; x < bitmapWidth; x++) {
-			for (int y = 0; y < bitmapHeight; y++) {
-				if (bitmap[x][y] != EDGE) {
-					int up = getBitmapCell(x, y-1);
-					int left = getBitmapCell(x-1, y);
-					if (up != EDGE) setBitmapCell(x, y, up);
-					else if (left != EDGE) setBitmapCell(x, y, left);
-					else { // if can't infer from neighbourhood, ray trace
-						int nXCrossings = 0;
-						int nYCrossings = 0;
-						for (int i = 0; i < x; i++) {
-							if (getBitmapCell(i, y) == EDGE && getBitmapCell(i-1, y) != EDGE) nXCrossings++;
+		for (int y = 0; y < bitmapHeight-1; y++) {
+			for (int x = 0; x < bitmapWidth-1; x++) {
+				if (getBitmapCell(x, y) == EDGE) {
+					if (getBitmapCell(x+1, y) == OUTSIDE && cellIsInsideByXRay(x+1, y) && cellIsInsideByYRay(x+1, y)) {
+						if (getBitmapCell(x+1, y-1) == OUTSIDE) {
+							setBitmapCell(x+1, y, INSIDE);
+							propagateSeed(x+1, y, 0);
 						}
-						for (int i = 0; i < y; i++) {
-							if (getBitmapCell(x, i) == EDGE && getBitmapCell(x, i-1) != EDGE) nYCrossings++;
-						}
-						if (nXCrossings % 2 == 1 && nYCrossings % 2 == 1) setBitmapCell(x, y, INSIDE);
 					}
 				}
 			}
 		}
 	}
 
+	public boolean cellIsInsideByXRay(int x, int y) {
+		double xd = (x + 0.5)*cellSize;
+		double yd = (y + 0.5)*cellSize;
+		int crossings = 0;
+		Iterator<Edge> iterator = edges.iterator();
+		Edge e;
+		Edge ray = new Edge(0, yd, xd, yd);
+		while (iterator.hasNext()) {
+			e = iterator.next();
+			if (e.crosses(ray)) crossings++;
+		}
+		return (crossings % 2 == 1);
+	}
+
+	public boolean cellIsInsideByYRay(int x, int y) {
+		double xd = (x + 0.5)*cellSize;
+		double yd = (y + 0.5)*cellSize;
+		int crossings = 0;
+		Iterator<Edge> iterator = edges.iterator();
+		Edge e;
+		Edge ray = new Edge(xd, 0, xd, yd);
+		while (iterator.hasNext()) {
+			e = iterator.next();
+			if (e.crosses(ray)) crossings++;
+		}
+		return (crossings % 2 == 1);
+	}
+
+	private void propagateSeed(int x, int y, int depth) {
+		if (depth < 1000) {
+			int bitmapWidth = bitmap.length;
+			int bitmapHeight = bitmap[0].length;
+			if (x > 0 && getBitmapCell(x-1, y) == OUTSIDE) {
+				setBitmapCell(x-1, y, INSIDE);
+				propagateSeed(x-1, y, depth + 1);
+			}
+			if (x < bitmapWidth -2 && getBitmapCell(x+1, y) == OUTSIDE) {
+				setBitmapCell(x+1, y, INSIDE);
+				propagateSeed(x+1, y, depth + 1);
+			}
+			if (y > 0 && getBitmapCell(x, y-1) == OUTSIDE) {
+				setBitmapCell(x, y-1, INSIDE);
+				propagateSeed(x, y-1, depth + 1);
+			}
+			if (y < bitmapHeight -2 && getBitmapCell(x, y+1) == OUTSIDE) {
+				setBitmapCell(x, y+1, INSIDE);
+				propagateSeed(x, y+1, depth + 1);
+			}
+		}
+	}
+	
 	public void drawLineInBitmap(double x1, double y1, double x2, double y2, int value) {
 		LineStepper lineStepper = new LineStepper(cellSize, x1, y1, x2, y2);
 		// only draw over cell if it isn't already an edge
@@ -115,7 +170,7 @@ public class PFBitmapFloorPlan extends PFFloorPlan{
 	public void setBitmapCell(int x, int y, int value) {
 		int bitmapWidth = bitmap.length;
 		int bitmapHeight = bitmap[0].length;
-		if (x >= 0 && x < bitmapWidth && y >= 0 && y < bitmapHeight) {
+		if (x >= 0 && x < bitmapWidth && y >= 0 && y < bitmapHeight && getBitmapCell(x, y) != EDGE) {
 			bitmap[x][y] = value;
 		}
 	}
