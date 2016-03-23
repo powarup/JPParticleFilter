@@ -18,9 +18,17 @@ public class PFNaiveFloorPlan extends PFFloorPlan {
 		return noCrossings;
 	}
 	
+	public boolean findFirstEdgeCrossing(double x1, double y1, double x2, double y2) {
+		for (Edge e : edges) {
+			if (e.crosses(x1, y1, x2, y2)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public PFCrossing findCrossing(double x1, double y1, double x2, double y2) {
-		int noCrossings = findEdgeCrossings(x1,y1,x2,y2);
-		return (noCrossings > 0) ? PFCrossing.CROSSING : PFCrossing.NONE;
+		return (findFirstEdgeCrossing(x1, y1, x2, y2)  ? PFCrossing.CROSSING : PFCrossing.NONE);
 	}
 
 	public boolean pointIsInsidePlan(double x, double y) { // essentially ray casting algorithm, horizontal ray fixed at y then fixed at x
@@ -31,10 +39,10 @@ public class PFNaiveFloorPlan extends PFFloorPlan {
 		
 		boolean isInsideX = false;
 		boolean isInsideY = false;
-		int noCrossings;
 		
-		noCrossings = findEdgeCrossings(0, y, x, y);
-		if (noCrossings > 0 && (noCrossings % 2) == 1) {
+		int noXCrossings = findEdgeCrossings(0, y, x, y);
+		int noYCrossings = findEdgeCrossings(x, 0, x, y);
+		if (noXCrossings + noYCrossings > 0 && (noXCrossings % 2) == 1 && (noYCrossings % 2) == 1) {
 			return true;
 		}
 		
