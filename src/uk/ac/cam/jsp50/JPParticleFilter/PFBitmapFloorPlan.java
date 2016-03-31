@@ -25,7 +25,8 @@ public class PFBitmapFloorPlan extends PFFloorPlan{
 		if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return PFCrossing.CROSSING;
 		while (lineStepper.canStepForward()) {
 			lineStepper.stepForward();
-			if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return PFCrossing.CROSSING;
+			int step = getBitmapCell(lineStepper.currentX, lineStepper.currentY);
+			if (step == EDGE || step == OUTSIDE) return PFCrossing.CROSSING;
 		}
 		return PFCrossing.NONE;
 	}
