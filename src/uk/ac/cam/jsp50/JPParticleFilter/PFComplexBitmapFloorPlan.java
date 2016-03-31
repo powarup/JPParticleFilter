@@ -112,14 +112,16 @@ public class PFComplexBitmapFloorPlan extends PFBitmapFloorPlan {
 	@Override
 	public PFCrossing findCrossing(double x1, double y1, double x2, double y2) {
 		LineStepper lineStepper = new LineStepper(cellSize, x1, y1, x2, y2);
+		PFCrossing base = PFCrossing.NONE;
 		if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return PFCrossing.CROSSING;
-		else if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == DOOR) return PFCrossing.DOOR;
+		else if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == DOOR) base = PFCrossing.DOOR;
 		while (lineStepper.canStepForward()) {
 			lineStepper.stepForward();
-			if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == EDGE) return PFCrossing.CROSSING;
-			else if (getBitmapCell(lineStepper.currentX, lineStepper.currentY) == DOOR) return PFCrossing.DOOR;
+			int step = getBitmapCell(lineStepper.currentX, lineStepper.currentY);
+			if (step == EDGE || step == OUTSIDE) return PFCrossing.CROSSING;
+			else if (step == DOOR) base = PFCrossing.DOOR;
 		}
-		return PFCrossing.NONE;
+		return base;
 	}
 
 	@Override
