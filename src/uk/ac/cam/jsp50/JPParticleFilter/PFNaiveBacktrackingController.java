@@ -39,7 +39,7 @@ public class PFNaiveBacktrackingController extends PFController {
 			if (floorPlan.pointIsInsidePlan(x, y)) {
 				particleStore.addParticle(x,y,weight);
 				activeParticles++;
-			} else System.out.println("rejecting particle " + x + "," + y);
+			}// else System.out.println("rejecting particle " + x + "," + y);
 		}
 		System.out.println("initialised with " + activeParticles + " particles");
 	}
