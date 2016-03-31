@@ -186,7 +186,7 @@ public class PFNaiveBacktrackingController extends PFController {
 		long startTime;
 		long endTime;
 		
-		recorder = new PFRecorder(recorderShouldCollectMemoryStats, recorderShouldCollectTimeStats, recorderShouldCollectSteps, recorderShouldTrackPosition, BACKTRACKING_SCHEME, 1000, randomFilePath, stepVectorFilePath);
+		recorder = new PFRecorder(recorderShouldCollectMemoryStats, recorderShouldCollectTimeStats, recorderShouldCollectSteps, recorderShouldTrackPosition, BACKTRACKING_SCHEME, 10000, randomFilePath, stepVectorFilePath);
 		
 		PFController.maxParticleNo = maxParticleNo;
 		PFController.degeneracyLimit = degeneracyLimit;
