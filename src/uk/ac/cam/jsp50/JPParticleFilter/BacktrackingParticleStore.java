@@ -206,27 +206,16 @@ public abstract class BacktrackingParticleStore extends ParticleStore {
 	}
 
 	public abstract void addParticle(double x, double y, double w, BacktrackingParticle parent);
+	public abstract void addParticleAtGeneration(double x, double y, double w, BacktrackingParticle parent, int generation);
 
 	public void addParticle(BacktrackingParticle particle) {
-		ArrayList<BacktrackingParticle> particles = generations.get(currentGeneration);
-		particles.add(particle);
+		addParticleAtGeneration(particle, currentGeneration);
 		greatestIndexAssigned++;
 	}
-
-	public void removeParticle(BacktrackingParticle p) {
-		removeParticleFromGeneration(p, currentGeneration);
-	}
-
-	public void removeParticleFromGeneration(BacktrackingParticle p, int generation) {
-		System.out.println("removing particle from generation " + generation);
-		int index = generations.get(generation).indexOf(p);
-		generations.get(generation).set(index, null);
-		if (p.parent != null) {
-			p.parent.nChildren--;
-			if (p.parent.nChildren == 0) {
-				removeParticleFromGeneration(p.parent, generation - 1);
-			}
-		}
+	
+	public void addParticleAtGeneration(BacktrackingParticle particle, int generation) {
+		ArrayList<BacktrackingParticle> particles = generations.get(generation);
+		particles.add(particle);
 	}
 
 	public void nextGeneration() {

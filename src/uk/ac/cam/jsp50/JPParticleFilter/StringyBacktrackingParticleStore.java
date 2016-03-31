@@ -7,6 +7,7 @@ public class StringyBacktrackingParticleStore extends BacktrackingParticleStore 
 	public class StringyBacktrackingParticle extends BacktrackingParticle {
 		public ArrayList<Double> historyX, historyY;
 		private ArrayList<WeightRange> historyW;
+		public int nChildren = 0;
 
 		private class WeightRange { // stores weight value and last generation at which weight was stored for this particle
 			public double weight;
@@ -66,6 +67,29 @@ public class StringyBacktrackingParticleStore extends BacktrackingParticleStore 
 	public void addParticle(double x, double y, double w, BacktrackingParticle parent) {
 		StringyBacktrackingParticle newParticle = new StringyBacktrackingParticle(x, y, w, parent);
 		addParticle(newParticle);
+	}
+	
+	@Override
+	public void addParticleAtGeneration(double x, double y, double w, BacktrackingParticle parent, int generation) {
+		StringyBacktrackingParticle newParticle = new StringyBacktrackingParticle(x, y, w, parent);
+		addParticleAtGeneration(newParticle, generation);
+	}
+	
+	public void removeParticle(BacktrackingParticle p) {
+		removeParticleFromGeneration(p, currentGeneration);
+	}
+
+	public void removeParticleFromGeneration(BacktrackingParticle p, int generation) {
+		//System.out.println("removing particle from generation " + generation);
+		int index = generations.get(generation).indexOf(p);
+		generations.get(generation).set(index, null);
+		StringyBacktrackingParticle parent = (StringyBacktrackingParticle) p.parent;
+		if (parent != null) {
+			parent.nChildren--;
+			if (parent.nChildren == 0) {
+				removeParticleFromGeneration(p.parent, generation - 1);
+			}
+		}
 	}
 	
 	@Override

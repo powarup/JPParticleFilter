@@ -22,6 +22,11 @@ public class NaiveBacktrackingParticleStore extends BacktrackingParticleStore {
 		addParticle(newParticle);
 	}
 	
+	public void addParticleAtGeneration(double x, double y, double w, BacktrackingParticle parent, int generation) {
+		NaiveBacktrackingParticle newParticle = new NaiveBacktrackingParticle(x, y, w, parent);
+		addParticleAtGeneration(newParticle, generation);
+	}
+	
 	@Override
 	public ParticleStore getFreshParticleStoreInstance() {
 		return new NaiveBacktrackingParticleStore();
