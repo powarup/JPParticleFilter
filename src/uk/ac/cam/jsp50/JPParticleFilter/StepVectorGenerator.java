@@ -3,6 +3,8 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -52,6 +54,14 @@ public class StepVectorGenerator {
 		return singleton;
 	}
 	
+	public static StepVectorGenerator startGeneratorFromInputStream(InputStream inputStream) throws StepVectorGeneratorInstanceAlreadyExistsException {
+		if (singleton == null) {
+			singleton = new StepVectorGenerator(inputStream);
+		} else throw new StepVectorGeneratorInstanceAlreadyExistsException();
+		
+		return singleton;
+	}
+	
 	// Constructors
 	
 	protected StepVectorGenerator() {
@@ -76,6 +86,18 @@ public class StepVectorGenerator {
 		}
 	}
 	
+	protected StepVectorGenerator(InputStream inputStream) {
+		if (randomGenerator == null) {
+			randomGenerator = PFRandom.getInstance();
+		}
+		
+		usingFile = true;
+		steps = new LinkedList<StepVector>();
+		System.out.println("StepVectorGenerator:: loading steps from input stream");
+		br = new BufferedReader(new InputStreamReader(inputStream));
+		loadCache();
+	}
+	
 	// object methods
 	
 	private void loadCache() {
@@ -91,7 +113,7 @@ public class StepVectorGenerator {
 				steps.add(new StepVector(length, angle, fixedLengthNoise, fixedAngleNoise));
 				}
 			if (line == null) {
-				System.err.println("StepVectorGenerator:: run out of steps");
+				System.err.println("StepVectorGenerator:: run out of steps, " + steps.size() + " left in cache");
 			}
 		} catch (NumberFormatException | IOException e) {
 			System.out.println("StepVectorGenerator:: exception");

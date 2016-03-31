@@ -3,6 +3,8 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -44,6 +46,14 @@ public class PFRandom {
 			System.out.println(e.getMessage());
 		}
 	}
+	
+	protected PFRandom(InputStream inputStream) {
+		usingFile = true;
+		doubles = new LinkedList<Double>();
+		System.out.println("PFRandom:: loading random numbers from input stream");
+		br = new BufferedReader(new InputStreamReader(inputStream));
+		loadCache();
+	}
 
 	public PFRandom(long seed) {
 		randomiser = new Random(seed);
@@ -72,6 +82,13 @@ public class PFRandom {
 	public static PFRandom startInstanceWithFile(String file) throws PFRandomInstanceAlreadyExistsException {
 		if (singleton == null) {
 			singleton = new PFRandom(file);
+		} else throw new PFRandomInstanceAlreadyExistsException();
+		return singleton;
+	}
+	
+	public static PFRandom startInstanceWithInputStream(InputStream inputStream) throws PFRandomInstanceAlreadyExistsException {
+		if (singleton == null) {
+			singleton = new PFRandom(inputStream);
 		} else throw new PFRandomInstanceAlreadyExistsException();
 		return singleton;
 	}
