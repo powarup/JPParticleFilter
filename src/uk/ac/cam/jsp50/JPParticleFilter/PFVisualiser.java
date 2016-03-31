@@ -119,7 +119,7 @@ public class PFVisualiser {
 	}
 
 	public void drawFP() {
-		for (Edge e : floorPlan.doors) {
+		if (floorPlan.doors != null) for (Edge e : floorPlan.doors) {
 			view.drawFPDoor(e);
 		}
 		for (Edge e : floorPlan.edges) {
