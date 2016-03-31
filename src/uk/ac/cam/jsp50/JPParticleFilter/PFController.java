@@ -34,6 +34,7 @@ public class PFController {
 	
 	public static void initWithParticleNo(ParticleStoreType type, int particleNo) {
 		System.out.println("initialising");
+		recorder.startRecordingInit();
 		currentStoreType = type;
 		switch (type) {
 		case OBJECT:
@@ -59,6 +60,7 @@ public class PFController {
 				activeParticles++;
 			}
 		}
+		recorder.endRecordingInit();
 		System.out.println("initialised with " + activeParticles + " particles");
 	}
 	

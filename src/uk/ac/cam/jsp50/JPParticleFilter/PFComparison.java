@@ -4,7 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.PFRecording;
+import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.*;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 
 public abstract class PFComparison {
@@ -30,7 +30,22 @@ public abstract class PFComparison {
 		for (int j = 0; j < recorder.currentRecordingIndex; j++) {
 			PFRecording recording = recorder.recordings[j];
 			long timeTaken = recording.endTime - recording.startTime;
-			writer.write(String.valueOf(recording.endMemory) + "," + String.valueOf(timeTaken) + "\n");
+			String type;
+			switch (recording.type) {
+			case PROPAGATE:
+				type = ",0";
+				break;
+			case RESAMPLE:
+				type = ",1";
+				break;
+			case INIT:
+				type = ",2";
+				break;
+			default:
+				type = "";
+				break;
+			}
+			writer.write(String.valueOf(recording.endMemory) + "," + String.valueOf(timeTaken) + type + "\n");
 		}
 		
 		writer.close();

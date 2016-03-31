@@ -7,8 +7,8 @@ import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
 
 public class PFRecorder {
 
-	private enum PFRecordingType {
-		PROPAGATE,RESAMPLE;
+	public enum PFRecordingType {
+		PROPAGATE,RESAMPLE,INIT;
 	}
 	
 	public class PFRecording {
@@ -20,7 +20,20 @@ public class PFRecorder {
 
 		public String summary() {
 			String summary = "";
-			summary += (type == PFRecordingType.PROPAGATE) ? "Propagated " + startParticleNo + " particles to " + endParticleNo + ", " : "Resampled " + startParticleNo + " particles to " + endParticleNo + ", ";
+			switch (type) {
+			case PROPAGATE:
+				summary += "Propagated " + startParticleNo + " particles to " + endParticleNo + ", ";
+				break;
+			case RESAMPLE:
+				summary += "Resampled " + startParticleNo + " particles to " + endParticleNo + ", ";
+				break;
+			case INIT:
+				summary += "Initialised " + endParticleNo + " particles, ";
+				break;
+
+			default:
+				break;
+			}
 			summary += "took " + getDuration() + "ms,\n";
 			summary += "started with " + (startMemory/(1024*1024)) + "MB, ended with " + (endMemory/(1024*1024)) + "MB";
 			if (position != null) summary += ", position is (" + position.x + "," + position.y + ") with stdev " + position.stdev;
@@ -33,7 +46,20 @@ public class PFRecorder {
 
 		public String fullDetails() {
 			String details = "";
-			details += (type == PFRecordingType.PROPAGATE) ? "Propagate" : "Resample";
+			switch (type) {
+			case PROPAGATE:
+				details += "Propagate";
+				break;
+			case RESAMPLE:
+				details += "Resample";
+				break;
+			case INIT:
+				details += "Init";
+				break;
+
+			default:
+				break;
+			}
 			details += "\nStart particle #: " + startParticleNo;
 			details += "\nEnd particle #: " + endParticleNo;
 			details += "\nStart time: " + startTime;
@@ -65,7 +91,7 @@ public class PFRecorder {
 	private HashSet<Step> currentSteps;
 	public HashSet<Step> lastSteps;
 
-	public boolean recordingPropagate = false, recordingResample = false;
+	public boolean recordingPropagate = false, recordingResample = false, recordingInit = false;
 	public int currentRecordingIndex = 0; // points to current recording, or if no recording is in progress, next available
 
 	public PFRecorder(boolean collectingMemoryStatistics, boolean collectingTimeStatistics, boolean collectingSteps, boolean collectingPosition, PFBacktrackingScheme backtrackingScheme, int maxRecordingNo, String randomFilePath, String stepVectorFilePath) {
@@ -233,6 +259,32 @@ public class PFRecorder {
 	public void endRecordingResample() {
 		if (recordingResample) {
 			recordingResample = false;
+			PFRecording currentRecording = recordings[currentRecordingIndex];
+			currentRecording.endParticleNo = PFController.activeParticles;
+			if (collectingTimeStatistics) currentRecording.endTime = System.currentTimeMillis();
+			if (collectingMemoryStatistics) currentRecording.endMemory = measureMemory();
+			incrementCurrentRecordingIndex();
+		}
+
+		currentGeneration++;
+	}
+	
+	public void startRecordingInit() {
+		if (collectingMemoryStatistics || collectingTimeStatistics) {
+			if (recordingPropagate) endRecordingPropagate();
+			if (recordingResample) endRecordingResample();
+			recordingInit = true;
+			PFRecording currentRecording = recordings[currentRecordingIndex];
+			currentRecording.type = PFRecordingType.INIT;
+			currentRecording.startParticleNo = getActiveParticleNo();
+			if (collectingMemoryStatistics) currentRecording.startMemory = measureMemory();
+			if (collectingTimeStatistics) currentRecording.startTime = System.currentTimeMillis();
+		}
+	}
+
+	public void endRecordingInit() {
+		if (recordingInit) {
+			recordingInit = false;
 			PFRecording currentRecording = recordings[currentRecordingIndex];
 			currentRecording.endParticleNo = PFController.activeParticles;
 			if (collectingTimeStatistics) currentRecording.endTime = System.currentTimeMillis();
