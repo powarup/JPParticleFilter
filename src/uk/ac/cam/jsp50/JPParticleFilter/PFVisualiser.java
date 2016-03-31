@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import uk.ac.cam.jsp50.JPParticleFilter.BacktrackingParticleStore.BacktrackingParticleManager;
-import uk.ac.cam.jsp50.JPParticleFilter.NaiveBacktrackingParticleStore.NaiveBacktrackingParticle;
 import uk.ac.cam.jsp50.JPParticleFilter.PFRecorder.Position;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleManager;
 import uk.ac.cam.jsp50.JPParticleFilter.ParticleStore.ParticleNotFoundException;
@@ -63,12 +62,13 @@ public class PFVisualiser {
 
 				switch (recorder.backtrackingScheme) {
 				case NAIVE:
-					NaiveBacktrackingParticle oldNaivePoint = (NaiveBacktrackingParticle) backtrackingParticleManager.getParticle().parent;
+				case ACTIVE_PRUNING:
+					BacktrackingParticle oldNaivePoint = backtrackingParticleManager.getParticle().parent;
 					while (oldNaivePoint != null && oldNaivePoint.parent != null) {
 						Step oldStep = new Step(oldNaivePoint.x, oldNaivePoint.y, oldNaivePoint.parent.x, oldNaivePoint.parent.y, false, age);
 						view.drawPastStep(oldStep);
 						age++;
-						oldNaivePoint = (NaiveBacktrackingParticle) oldNaivePoint.parent;
+						oldNaivePoint = oldNaivePoint.parent;
 					}
 					break;
 

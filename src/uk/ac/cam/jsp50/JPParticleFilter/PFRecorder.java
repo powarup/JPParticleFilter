@@ -164,6 +164,8 @@ public class PFRecorder {
 			return PFNaiveBacktrackingController.activeParticles;
 		case STRINGY:
 			return PFStringyParticleBacktrackingController.activeParticles;
+		case ACTIVE_PRUNING:
+			return PFActivePruningBacktrackingController.activeParticles;
 		default:
 			return PFController.activeParticles;
 		}
@@ -177,6 +179,8 @@ public class PFRecorder {
 			return PFNaiveBacktrackingController.maxParticleNo;
 		case STRINGY:
 			return PFStringyParticleBacktrackingController.maxParticleNo;
+		case ACTIVE_PRUNING:
+			return PFActivePruningBacktrackingController.maxParticleNo;
 		default:
 			return PFController.maxParticleNo;
 		}
@@ -190,6 +194,8 @@ public class PFRecorder {
 			return PFNaiveBacktrackingController.degeneracyLimit;
 		case STRINGY:
 			return PFStringyParticleBacktrackingController.degeneracyLimit;
+		case ACTIVE_PRUNING:
+			return PFActivePruningBacktrackingController.degeneracyLimit;
 		default:
 			return PFController.degeneracyLimit;
 		}
@@ -203,6 +209,8 @@ public class PFRecorder {
 			return PFNaiveBacktrackingController.particleStore;
 		case STRINGY:
 			return PFStringyParticleBacktrackingController.particleStore;
+		case ACTIVE_PRUNING:
+			return PFActivePruningBacktrackingController.particleStore;
 		default:
 			return PFController.particleStore;
 		}

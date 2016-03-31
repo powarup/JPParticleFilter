@@ -2,7 +2,6 @@ package uk.ac.cam.jsp50.JPParticleFilter;
 
 public abstract class BacktrackingParticle {
 	public double x,y,w;
-	public int nChildren = 0;
 	public BacktrackingParticle parent;
 
 	public void displace(StepVector s) {

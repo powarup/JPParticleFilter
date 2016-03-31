@@ -12,7 +12,6 @@ public class NaiveBacktrackingParticleStore extends BacktrackingParticleStore {
 		}
 		
 		public BacktrackingParticle generateChild() {
-			nChildren++;
 			return new NaiveBacktrackingParticle(x, y, w, this);
 		}
 	}
