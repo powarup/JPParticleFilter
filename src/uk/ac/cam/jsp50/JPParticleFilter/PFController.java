@@ -306,7 +306,7 @@ public class PFController {
 			}
 			nextStep = stepGen.next();
 			propagate(nextStep);
-			System.out.println(recorder.recordings[recorder.currentRecordingIndex-1].summary());
+			System.out.println("Recording #" + (recorder.currentRecordingIndex - 1) + " " + recorder.recordings[recorder.currentRecordingIndex-1].summary());
 			visualiser.update(true);
 			if (scan.nextLine() != null) {
 				visualiser.update(false);
@@ -314,7 +314,7 @@ public class PFController {
 			boolean degeneracyClose = activeParticles <= degeneracyLimit;
 			if (degeneracyClose) try {
 				resample();
-				System.out.println(recorder.recordings[recorder.currentRecordingIndex-1].summary());
+				System.out.println("Recording #" + (recorder.currentRecordingIndex - 1) + " " + recorder.recordings[recorder.currentRecordingIndex-1].summary());
 			} catch (ParticleNotFoundException e) {
 				System.err.println(e.getMessage());
 			}

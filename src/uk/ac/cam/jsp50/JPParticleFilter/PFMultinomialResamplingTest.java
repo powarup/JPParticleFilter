@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,7 +37,7 @@ public class PFMultinomialResamplingTest {
 		checkResampleKeepsTotalWeightCorrectly();
 	}
 
-	@Test @Ignore
+	@Test
 	public void tenthousandParticleTotalWeightStaysCorrect() throws ParticleNotFoundException, FileNotFoundException {
 		FileInputStream floorPlanStream = new FileInputStream("polygon1.csv");
 		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, 10000, 10000, 10000, null, null, false, false, false, false, false);
@@ -67,6 +68,7 @@ public class PFMultinomialResamplingTest {
 			if (PFController.activeParticles <= 0) break;
 			PFController.resample();
 			assertTrue(totalWeight <= 1.01);
+			n++;
 		}
 		
 	}
@@ -104,8 +106,8 @@ public class PFMultinomialResamplingTest {
 			resampleForIndex(index);
 		}
 		
-		// iterate until particles die
-		while (PFController.activeParticles == 2) {	
+		// iterate until particles die or 200 steps
+		while (PFController.activeParticles == 2 && n < 200) {	
 			// Propagate
 			nextStep = stepGen.next();
 			PFController.propagate(nextStep);

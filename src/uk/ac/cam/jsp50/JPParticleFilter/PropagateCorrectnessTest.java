@@ -12,7 +12,7 @@ public class PropagateCorrectnessTest {
 	@Test
 	public void propagatingInEmptyFPConservesNumber() throws FileNotFoundException {
 		int n = 10000;
-		int nSteps = 100;
+		int nSteps = 1000;
 		FileInputStream floorPlanStream = new FileInputStream("10m_1Point.csv");
 		PFController.setupFilter(floorPlanStream, ParticleStoreType.OBJECT, FloorPlanType.NAIVE, n, n, 0, null, null, false, false, false, false, false);
 		StepVectorGenerator stepVectorGenerator = StepVectorGenerator.getInstance();

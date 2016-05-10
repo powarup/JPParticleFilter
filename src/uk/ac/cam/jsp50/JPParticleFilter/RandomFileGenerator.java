@@ -17,7 +17,7 @@ public class RandomFileGenerator {
 	}
 	
 	public static void main(String[] args) throws NumberFormatException, FileNotFoundException, UnsupportedEncodingException {
-		if (args[2] != null) {
+		if (args.length > 2 && args[2] != null) {
 			int n = Integer.parseInt(args[2]);
 			String path;
 			for (int i = 1; i <= n; i++) {

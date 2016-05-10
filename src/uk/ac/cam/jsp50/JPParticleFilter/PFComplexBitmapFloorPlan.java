@@ -20,7 +20,7 @@ public class PFComplexBitmapFloorPlan extends PFBitmapFloorPlan {
 		// fill with outside if closed, leave as default (inside) if open
 		int bitmapWidth = bitmap.length;
 		int bitmapHeight = bitmap[0].length;
-		System.out.println("Building " + (closed ? "closed " : "open ") + "bitmap floor plan");
+		System.out.println("Building " + (closed ? "closed " : "open ") + "bitmap floor plan, " + bitmapWidth + " by " + bitmapHeight + " bins");
 		if (closed) for (int x = 0; x < bitmapWidth; x++) {
 			for (int y = 0; y < bitmapHeight; y++) {
 				bitmap[x][y] = OUTSIDE;
