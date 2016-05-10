@@ -102,7 +102,7 @@ public class PFSwingView extends PFView {
 		}
 		
 		private Color getColorForAge(int age) {
-			return Color.yellow;
+			return Color.MAGENTA;
 		}
 		
 		private void drawPosition(Graphics2D g) {
